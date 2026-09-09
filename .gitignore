@@ -1,0 +1,26 @@
+# Xcode
+build/
+.derived/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Release packaging
+dist/
+.DS_Store
+
+# Swift / SPM
+.build/
+.swiftpm/
+
+# Editor
+*.swp
+*~
+.idea/

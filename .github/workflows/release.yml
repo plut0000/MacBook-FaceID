@@ -1,0 +1,69 @@
+name: Build and release
+
+on:
+  push:
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  macos:
+    name: Build macOS app
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Xcode
+        run: xcodebuild -version && xcrun swift --version
+
+      - name: Build Release
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project MacBookFaceID/MacBookFaceID.xcodeproj \
+            -scheme MacBookFaceID \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -derivedDataPath .derived \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+
+      - name: Package .app zip and dmg
+        run: |
+          set -euo pipefail
+          chmod +x scripts/package_release.sh
+          VERSION="${GITHUB_REF_NAME:-dev}"
+          if [[ "${GITHUB_REF_TYPE:-}" != "tag" ]]; then
+            VERSION="0.1.0-${GITHUB_SHA::7}"
+          fi
+          scripts/package_release.sh ".derived/Build/Products/Release/MacBook FaceID.app" "$VERSION"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MacBook-FaceID
+          path: dist/*
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/MacBook-FaceID.zip
+            dist/MacBook-FaceID.dmg
+          generate_release_notes: true
+          body: |
+            Unsigned macOS build of **MacBook FaceID** (Face Unlock).
+
+            After download: drag to Applications, then right-click → Open (or `xattr -cr`).
+
+            Grant Camera, Accessibility, and save your login password in Keychain during setup.
+
+            This is convenience unlock — not Secure Enclave Face ID. See the README for behavior and caveats.

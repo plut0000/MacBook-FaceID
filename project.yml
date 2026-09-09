@@ -1,0 +1,43 @@
+name: MacBookFaceID
+options:
+  bundleIdPrefix: com.plut0000
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    MARKETING_VERSION: 0.1.0
+    CURRENT_PROJECT_VERSION: 1
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    ENABLE_HARDENED_RUNTIME: YES
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  MacBookFaceID:
+    type: application
+    platform: macOS
+    productName: MacBook FaceID
+    sources:
+      - path: MacBookFaceID/MacBookFaceID
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.plut0000.MacBookFaceID
+        PRODUCT_NAME: MacBook FaceID
+        INFOPLIST_FILE: MacBookFaceID/MacBookFaceID/Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_ENTITLEMENTS: MacBookFaceID/MacBookFaceID/Resources/MacBookFaceID.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: MacBookFaceID/MacBookFaceID/Support/CGSessionBridge.h
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        LD_RUNPATH_SEARCH_PATHS:
+          - $(inherited)
+          - "@executable_path/../Frameworks"
+        COMBINE_HIDPI_IMAGES: YES
+    entitlements:
+      path: MacBookFaceID/MacBookFaceID/Resources/MacBookFaceID.entitlements
+    info:
+      path: MacBookFaceID/MacBookFaceID/Resources/Info.plist
+    scheme:
+      testTargets: []
