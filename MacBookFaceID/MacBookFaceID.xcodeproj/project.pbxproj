@@ -1,0 +1,528 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		06E20F0F8A974FDABD9E9E5C /* MacBookFaceIDApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DFDD78D4A4B41A780A46CA3 /* MacBookFaceIDApp.swift */; };
+		54BA6B563F6C4D4EB8FF22C6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0C4664895045B2B51F87C6 /* AppDelegate.swift */; };
+		CF3767C1C3374DE791AC1272 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64555CC286D1474ABF58FBBF /* AppModel.swift */; };
+		E1319F2D048F47D28DA75A84 /* NotchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E175836925AB4FB2B1FD83F3 /* NotchController.swift */; };
+		91AE4C46F3564A21BB5A9CC2 /* NotchPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1484B728DD4A78B330B971 /* NotchPanelView.swift */; };
+		11F87AB595C04F678D8C9599 /* FaceUnlockAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D26A82A8E22A4FCD9783B188 /* FaceUnlockAnimationView.swift */; };
+		660B49344DA24785BC8E2881 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2437ABBDFAE4436DA5379577 /* SettingsView.swift */; };
+		8C2B10E50AE940B29CDB8B53 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC60AD439F642E3AC257736 /* OnboardingView.swift */; };
+		D345F3F4D9624DDE9054C6BE /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133EBBD376EA4C18B26946BE /* MenuBarContentView.swift */; };
+		C3182C2C064A4264985DBC5B /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD26BE6FF0A4486A0282DAD /* CameraManager.swift */; };
+		E3874A527D0C4017ACC27BD1 /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58EDB506C6AE4781BF565BA8 /* CameraPreviewView.swift */; };
+		E228E303A87C4889859B7F64 /* FaceAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DA20254AF14F618098115C /* FaceAnalyzer.swift */; };
+		FE6B345C753E4C96B08E2E37 /* FaceTemplateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C136824E104584865B3935 /* FaceTemplateStore.swift */; };
+		E213165174564410A866CF29 /* UnlockCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C497510ADC2C4F63B09986CB /* UnlockCoordinator.swift */; };
+		AA9E399B45794AD28DB3FFCA /* ScreenLockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8DDDBAB8954BE48BF16825 /* ScreenLockObserver.swift */; };
+		22CE2DCF47B74896B829A26C /* AccessibilityTyper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E045EF3152F74201921C031F /* AccessibilityTyper.swift */; };
+		E4ED0AC219F54861BE4484D3 /* DisplayWaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBADBA204114E8896395B8B /* DisplayWaker.swift */; };
+		84799ECC04124F7F91566FB7 /* LoginPasswordKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDC18DBCE3A44B19C05E8F5 /* LoginPasswordKeychain.swift */; };
+		DCB6333EF46D4A59893E370D /* PermissionMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F53E352EAC4CFFBCA87419 /* PermissionMonitor.swift */; };
+		8471F88A8E8D4BA0892E0FCE /* NotchGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E45E0928654FBFA3DE431F /* NotchGeometry.swift */; };
+		0AA6D67043E848A7B08C6143 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15D08AB484F4E8BB2F81BC7 /* AppConstants.swift */; };
+		FA2C4C0C02504F008B98B589 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB3F13C815D14A0F8092D67D /* Assets.xcassets */; };
+		88332E121DA44399A3D47C21 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB91A44D76A04EB482F0CC16 /* SwiftUI.framework */; };
+		9293CD45FE654522A00DA457 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 422EFC578FB647AFB18CCD67 /* AppKit.framework */; };
+		C9F5FC6E40434E3692BCEDB6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61E28DF7DC914A68AEC6DAA2 /* AVFoundation.framework */; };
+		9E9168E4D77C4A328076515B /* Vision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9ABBE2FFBBB84DE48F6FE0D1 /* Vision.framework */; };
+		A6301F3CA2864F4E942A757C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78043BC1DD934D46B83342F6 /* Security.framework */; };
+		F01C5FF529924642A3ACD936 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32302710846D45A2BF49CA7A /* IOKit.framework */; };
+		B2C2188313074D14842EDEE4 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF14AEFEC8AA4A1FBD145C4A /* ApplicationServices.framework */; };
+		0103F156B04F4191A1AF7CB7 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E5E5388B4A4CE4866A5784 /* ServiceManagement.framework */; };
+		C1C01FE435C848DFB7BA7AEA /* Combine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48EC5A77C40D40ED84355921 /* Combine.framework */; };
+		58A82E9E284142378837246E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E00998EDD62477EBE5995CD /* CoreGraphics.framework */; };
+		73467252D3E84B03A792D266 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3846D016D93476AA8A93679 /* CoreImage.framework */; };
+		811F37579E9446C0BD68C1FB /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D673BE3DC74DB49A1BEB17 /* QuartzCore.framework */; };
+		07B626F1C7F84E58A2E9AD31 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D50A128710E748EA8B46F7B2 /* Carbon.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		721E8415DBE54B14A8522737 /* MacBook FaceID.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacBook FaceID.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DFDD78D4A4B41A780A46CA3 /* MacBookFaceIDApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacBookFaceIDApp.swift; sourceTree = "<group>"; };
+		CF0C4664895045B2B51F87C6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		64555CC286D1474ABF58FBBF /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		E175836925AB4FB2B1FD83F3 /* NotchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchController.swift; sourceTree = "<group>"; };
+		FA1484B728DD4A78B330B971 /* NotchPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPanelView.swift; sourceTree = "<group>"; };
+		D26A82A8E22A4FCD9783B188 /* FaceUnlockAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceUnlockAnimationView.swift; sourceTree = "<group>"; };
+		2437ABBDFAE4436DA5379577 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		0CC60AD439F642E3AC257736 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		133EBBD376EA4C18B26946BE /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
+		DBD26BE6FF0A4486A0282DAD /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		58EDB506C6AE4781BF565BA8 /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
+		67DA20254AF14F618098115C /* FaceAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceAnalyzer.swift; sourceTree = "<group>"; };
+		95C136824E104584865B3935 /* FaceTemplateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceTemplateStore.swift; sourceTree = "<group>"; };
+		C497510ADC2C4F63B09986CB /* UnlockCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockCoordinator.swift; sourceTree = "<group>"; };
+		FE8DDDBAB8954BE48BF16825 /* ScreenLockObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenLockObserver.swift; sourceTree = "<group>"; };
+		E045EF3152F74201921C031F /* AccessibilityTyper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTyper.swift; sourceTree = "<group>"; };
+		FDBADBA204114E8896395B8B /* DisplayWaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayWaker.swift; sourceTree = "<group>"; };
+		5CDC18DBCE3A44B19C05E8F5 /* LoginPasswordKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasswordKeychain.swift; sourceTree = "<group>"; };
+		78F53E352EAC4CFFBCA87419 /* PermissionMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionMonitor.swift; sourceTree = "<group>"; };
+		89E45E0928654FBFA3DE431F /* NotchGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchGeometry.swift; sourceTree = "<group>"; };
+		C15D08AB484F4E8BB2F81BC7 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		A585FD5DA6774A908EEC5712 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2DAD81E9179E4C98AD62322D /* MacBookFaceID.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MacBookFaceID.entitlements; sourceTree = "<group>"; };
+		FB3F13C815D14A0F8092D67D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E365C24E41B7455B9907C46C /* CGSessionBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CGSessionBridge.h; sourceTree = "<group>"; };
+		FB91A44D76A04EB482F0CC16 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		422EFC578FB647AFB18CCD67 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		61E28DF7DC914A68AEC6DAA2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		9ABBE2FFBBB84DE48F6FE0D1 /* Vision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vision.framework; path = System/Library/Frameworks/Vision.framework; sourceTree = SDKROOT; };
+		78043BC1DD934D46B83342F6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		32302710846D45A2BF49CA7A /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		EF14AEFEC8AA4A1FBD145C4A /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		64E5E5388B4A4CE4866A5784 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		48EC5A77C40D40ED84355921 /* Combine.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Combine.framework; path = System/Library/Frameworks/Combine.framework; sourceTree = SDKROOT; };
+		3E00998EDD62477EBE5995CD /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		E3846D016D93476AA8A93679 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		A5D673BE3DC74DB49A1BEB17 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D50A128710E748EA8B46F7B2 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		32CD79738C954250B4CB9466 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				88332E121DA44399A3D47C21 /* SwiftUI.framework in Frameworks */,
+				9293CD45FE654522A00DA457 /* AppKit.framework in Frameworks */,
+				C9F5FC6E40434E3692BCEDB6 /* AVFoundation.framework in Frameworks */,
+				9E9168E4D77C4A328076515B /* Vision.framework in Frameworks */,
+				A6301F3CA2864F4E942A757C /* Security.framework in Frameworks */,
+				F01C5FF529924642A3ACD936 /* IOKit.framework in Frameworks */,
+				B2C2188313074D14842EDEE4 /* ApplicationServices.framework in Frameworks */,
+				0103F156B04F4191A1AF7CB7 /* ServiceManagement.framework in Frameworks */,
+				C1C01FE435C848DFB7BA7AEA /* Combine.framework in Frameworks */,
+				58A82E9E284142378837246E /* CoreGraphics.framework in Frameworks */,
+				73467252D3E84B03A792D266 /* CoreImage.framework in Frameworks */,
+				811F37579E9446C0BD68C1FB /* QuartzCore.framework in Frameworks */,
+				07B626F1C7F84E58A2E9AD31 /* Carbon.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		80852C2A14D74CCA8F3B3AE9 = {
+			isa = PBXGroup;
+			children = (
+				F66C5F91F3B547A1B31D7581 /* MacBookFaceID */,
+				9FDBA73CD10F4C03A4428CD5 /* Frameworks */,
+				E26496E0493B4AA59572C850 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E26496E0493B4AA59572C850 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				721E8415DBE54B14A8522737 /* MacBook FaceID.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F66C5F91F3B547A1B31D7581 /* MacBookFaceID */ = {
+			isa = PBXGroup;
+			children = (
+				A546CAA26BBA4058921B363E /* App */,
+				A0046801833D44559B155D33 /* NotchUI */,
+				EC6717955F2F44B297085F82 /* Camera */,
+				7DFBF4EB34A8493DA91FDB79 /* Vision */,
+				482CA2AD3D5E41A093F7ACC1 /* Unlock */,
+				7C38F5C3BBA443E3987FCD4A /* Keychain */,
+				65AFB82E8E364456BAF19792 /* Permissions */,
+				3EDEC461484D4B62BF80AEDF /* Support */,
+				FE64D96EA5B64C9BAA4CA47F /* Resources */,
+			);
+			path = MacBookFaceID;
+			sourceTree = "<group>";
+		};
+		FE64D96EA5B64C9BAA4CA47F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A585FD5DA6774A908EEC5712 /* Info.plist */,
+				2DAD81E9179E4C98AD62322D /* MacBookFaceID.entitlements */,
+				FB3F13C815D14A0F8092D67D /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		9FDBA73CD10F4C03A4428CD5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FB91A44D76A04EB482F0CC16 /* SwiftUI.framework */,
+				422EFC578FB647AFB18CCD67 /* AppKit.framework */,
+				61E28DF7DC914A68AEC6DAA2 /* AVFoundation.framework */,
+				9ABBE2FFBBB84DE48F6FE0D1 /* Vision.framework */,
+				78043BC1DD934D46B83342F6 /* Security.framework */,
+				32302710846D45A2BF49CA7A /* IOKit.framework */,
+				EF14AEFEC8AA4A1FBD145C4A /* ApplicationServices.framework */,
+				64E5E5388B4A4CE4866A5784 /* ServiceManagement.framework */,
+				48EC5A77C40D40ED84355921 /* Combine.framework */,
+				3E00998EDD62477EBE5995CD /* CoreGraphics.framework */,
+				E3846D016D93476AA8A93679 /* CoreImage.framework */,
+				A5D673BE3DC74DB49A1BEB17 /* QuartzCore.framework */,
+				D50A128710E748EA8B46F7B2 /* Carbon.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A546CAA26BBA4058921B363E /* App */ = {
+			isa = PBXGroup;
+			children = (
+				1DFDD78D4A4B41A780A46CA3 /* MacBookFaceIDApp.swift */,
+				CF0C4664895045B2B51F87C6 /* AppDelegate.swift */,
+				64555CC286D1474ABF58FBBF /* AppModel.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A0046801833D44559B155D33 /* NotchUI */ = {
+			isa = PBXGroup;
+			children = (
+				E175836925AB4FB2B1FD83F3 /* NotchController.swift */,
+				FA1484B728DD4A78B330B971 /* NotchPanelView.swift */,
+				D26A82A8E22A4FCD9783B188 /* FaceUnlockAnimationView.swift */,
+				2437ABBDFAE4436DA5379577 /* SettingsView.swift */,
+				0CC60AD439F642E3AC257736 /* OnboardingView.swift */,
+				133EBBD376EA4C18B26946BE /* MenuBarContentView.swift */,
+			);
+			path = NotchUI;
+			sourceTree = "<group>";
+		};
+		EC6717955F2F44B297085F82 /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				DBD26BE6FF0A4486A0282DAD /* CameraManager.swift */,
+				58EDB506C6AE4781BF565BA8 /* CameraPreviewView.swift */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
+		7DFBF4EB34A8493DA91FDB79 /* Vision */ = {
+			isa = PBXGroup;
+			children = (
+				67DA20254AF14F618098115C /* FaceAnalyzer.swift */,
+				95C136824E104584865B3935 /* FaceTemplateStore.swift */,
+			);
+			path = Vision;
+			sourceTree = "<group>";
+		};
+		482CA2AD3D5E41A093F7ACC1 /* Unlock */ = {
+			isa = PBXGroup;
+			children = (
+				C497510ADC2C4F63B09986CB /* UnlockCoordinator.swift */,
+				FE8DDDBAB8954BE48BF16825 /* ScreenLockObserver.swift */,
+				E045EF3152F74201921C031F /* AccessibilityTyper.swift */,
+				FDBADBA204114E8896395B8B /* DisplayWaker.swift */,
+			);
+			path = Unlock;
+			sourceTree = "<group>";
+		};
+		7C38F5C3BBA443E3987FCD4A /* Keychain */ = {
+			isa = PBXGroup;
+			children = (
+				5CDC18DBCE3A44B19C05E8F5 /* LoginPasswordKeychain.swift */,
+			);
+			path = Keychain;
+			sourceTree = "<group>";
+		};
+		65AFB82E8E364456BAF19792 /* Permissions */ = {
+			isa = PBXGroup;
+			children = (
+				78F53E352EAC4CFFBCA87419 /* PermissionMonitor.swift */,
+			);
+			path = Permissions;
+			sourceTree = "<group>";
+		};
+		3EDEC461484D4B62BF80AEDF /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				89E45E0928654FBFA3DE431F /* NotchGeometry.swift */,
+				C15D08AB484F4E8BB2F81BC7 /* AppConstants.swift */,
+				E365C24E41B7455B9907C46C /* CGSessionBridge.h */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A4332653A440425D93E59A2B /* MacBookFaceID */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 926F587A31A747E595C2AB8A /* Build configuration list for PBXNativeTarget "MacBookFaceID" */;
+			buildPhases = (
+				A62012F926B745139966A7DE /* Sources */,
+				32CD79738C954250B4CB9466 /* Frameworks */,
+				06A85EA7FCB24B7D915012DD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MacBookFaceID;
+			productName = "MacBook FaceID";
+			productReference = 721E8415DBE54B14A8522737 /* MacBook FaceID.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A33C37040C004021B0BA1BFC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A4332653A440425D93E59A2B = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 544304A6672D4652BE5D2764 /* Build configuration list for PBXProject "MacBookFaceID" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 80852C2A14D74CCA8F3B3AE9;
+			productRefGroup = E26496E0493B4AA59572C850 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A4332653A440425D93E59A2B /* MacBookFaceID */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		06A85EA7FCB24B7D915012DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA2C4C0C02504F008B98B589 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A62012F926B745139966A7DE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				06E20F0F8A974FDABD9E9E5C /* MacBookFaceIDApp.swift in Sources */,
+				54BA6B563F6C4D4EB8FF22C6 /* AppDelegate.swift in Sources */,
+				CF3767C1C3374DE791AC1272 /* AppModel.swift in Sources */,
+				E1319F2D048F47D28DA75A84 /* NotchController.swift in Sources */,
+				91AE4C46F3564A21BB5A9CC2 /* NotchPanelView.swift in Sources */,
+				11F87AB595C04F678D8C9599 /* FaceUnlockAnimationView.swift in Sources */,
+				660B49344DA24785BC8E2881 /* SettingsView.swift in Sources */,
+				8C2B10E50AE940B29CDB8B53 /* OnboardingView.swift in Sources */,
+				D345F3F4D9624DDE9054C6BE /* MenuBarContentView.swift in Sources */,
+				C3182C2C064A4264985DBC5B /* CameraManager.swift in Sources */,
+				E3874A527D0C4017ACC27BD1 /* CameraPreviewView.swift in Sources */,
+				E228E303A87C4889859B7F64 /* FaceAnalyzer.swift in Sources */,
+				FE6B345C753E4C96B08E2E37 /* FaceTemplateStore.swift in Sources */,
+				E213165174564410A866CF29 /* UnlockCoordinator.swift in Sources */,
+				AA9E399B45794AD28DB3FFCA /* ScreenLockObserver.swift in Sources */,
+				22CE2DCF47B74896B829A26C /* AccessibilityTyper.swift in Sources */,
+				E4ED0AC219F54861BE4484D3 /* DisplayWaker.swift in Sources */,
+				84799ECC04124F7F91566FB7 /* LoginPasswordKeychain.swift in Sources */,
+				DCB6333EF46D4A59893E370D /* PermissionMonitor.swift in Sources */,
+				8471F88A8E8D4BA0892E0FCE /* NotchGeometry.swift in Sources */,
+				0AA6D67043E848A7B08C6143 /* AppConstants.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		EE2297D3465C41BAB403F148 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+
+		8993D82180AB400BAED8858D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+
+		A4932F3CA4214B59BA0BD61B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MacBookFaceID/Resources/MacBookFaceID.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MacBookFaceID/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.plut0000.MacBookFaceID;
+				PRODUCT_NAME = "MacBook FaceID";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = MacBookFaceID/Support/CGSessionBridge.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+
+		5BC1B5F3E9654CFD944C1A28 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MacBookFaceID/Resources/MacBookFaceID.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MacBookFaceID/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.plut0000.MacBookFaceID;
+				PRODUCT_NAME = "MacBook FaceID";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = MacBookFaceID/Support/CGSessionBridge.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		544304A6672D4652BE5D2764 /* Build configuration list for PBXProject "MacBookFaceID" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE2297D3465C41BAB403F148 /* Debug */,
+				8993D82180AB400BAED8858D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		926F587A31A747E595C2AB8A /* Build configuration list for PBXNativeTarget "MacBookFaceID" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A4932F3CA4214B59BA0BD61B /* Debug */,
+				5BC1B5F3E9654CFD944C1A28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A33C37040C004021B0BA1BFC /* Project object */;
+}
