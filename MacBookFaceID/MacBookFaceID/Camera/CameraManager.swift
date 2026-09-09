@@ -113,7 +113,7 @@ final class CameraManager: NSObject, ObservableObject {
     /// Prefer the built-in FaceTime camera over Continuity Camera.
     static func preferredCamera() -> AVCaptureDevice? {
         var types: [AVCaptureDevice.DeviceType] = [.builtInWideAngleCamera]
-        if #available(macOS 13.0, *) {
+        if #available(macOS 14.0, *) {
             types.append(.continuityCamera)
         }
 

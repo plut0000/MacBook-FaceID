@@ -29,19 +29,20 @@ struct NotchGeometry: Equatable {
     static func geometry(on screen: NSScreen) -> NotchGeometry {
         let frame = screen.frame
         if #available(macOS 12.0, *) {
-            let left = screen.auxiliaryTopLeftArea
-            let right = screen.auxiliaryTopRightArea
-            let gap = right.minX - left.maxX
-            let hasNotch = left.width > 0 && right.width > 0 && gap > 48
-            if hasNotch {
-                let height = max(max(left.height, right.height), 32)
-                let notch = CGRect(
-                    x: left.maxX,
-                    y: frame.maxY - height,
-                    width: gap,
-                    height: height
-                )
-                return NotchGeometry(screenFrame: frame, notchFrame: notch, hasNotch: true)
+            if let left = screen.auxiliaryTopLeftArea,
+               let right = screen.auxiliaryTopRightArea {
+                let gap = right.minX - left.maxX
+                let hasNotch = left.width > 0 && right.width > 0 && gap > 48
+                if hasNotch {
+                    let height = max(max(left.height, right.height), 32)
+                    let notch = CGRect(
+                        x: left.maxX,
+                        y: frame.maxY - height,
+                        width: gap,
+                        height: height
+                    )
+                    return NotchGeometry(screenFrame: frame, notchFrame: notch, hasNotch: true)
+                }
             }
         }
 

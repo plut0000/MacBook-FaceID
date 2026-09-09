@@ -7,9 +7,9 @@ enum AppConstants {
 
     static let keychainService = "com.plut0000.MacBookFaceID.login-password"
 
-    /// `VNFeaturePrintObservation.computeDistance` — lower is more similar.
-    static let matchThreshold: Float = 0.55
-    static let tightMatchThreshold: Float = 0.38
+    /// RMS distance between similarity-normalized landmark embeddings. Lower is more similar.
+    static let matchThreshold: Float = 0.12
+    static let tightMatchThreshold: Float = 0.075
     static let requiredConsecutiveHits = 2
 
     static let enrollmentMinTemplates = 3

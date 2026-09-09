@@ -1,12 +1,11 @@
 import AppKit
 import Foundation
-import Vision
 
 struct StoredFaceTemplate: Codable, Identifiable {
     let id: UUID
     let createdAt: Date
     let quality: Float
-    let printData: Data
+    let embedding: FaceEmbedding
 }
 
 struct EnrollmentRecord: Codable {
@@ -58,17 +57,14 @@ final class FaceTemplateStore {
         return try? JSONDecoder().decode(EnrollmentRecord.self, from: data)
     }
 
-    func loadObservations() throws -> [VNFeaturePrintObservation] {
+    func loadEmbeddings() throws -> [FaceEmbedding] {
         try queue.sync {
             guard let record = loadRecordUnlocked() else { throw FaceStoreError.notEnrolled }
-            let prints: [VNFeaturePrintObservation] = record.templates.compactMap { item in
-                try? NSKeyedUnarchiver.unarchivedObject(
-                    ofClass: VNFeaturePrintObservation.self,
-                    from: item.printData
-                )
+            let embeddings = record.templates.map(\.embedding).filter {
+                $0.version == FaceEmbedding.currentVersion && !$0.values.isEmpty
             }
-            if prints.isEmpty { throw FaceStoreError.decodeFailed }
-            return prints
+            if embeddings.isEmpty { throw FaceStoreError.decodeFailed }
+            return embeddings
         }
     }
 
@@ -81,19 +77,12 @@ final class FaceTemplateStore {
     }
 
     func save(analyses: [FaceFrameAnalysis], thumbnail: NSImage?) throws {
-        var templates: [StoredFaceTemplate] = []
-        for analysis in analyses {
-            let data = try NSKeyedArchiver.archivedData(
-                withRootObject: analysis.featurePrint,
-                requiringSecureCoding: true
-            )
-            templates.append(
-                StoredFaceTemplate(
-                    id: UUID(),
-                    createdAt: Date(),
-                    quality: analysis.quality,
-                    printData: data
-                )
+        let templates = analyses.map { analysis in
+            StoredFaceTemplate(
+                id: UUID(),
+                createdAt: Date(),
+                quality: analysis.quality,
+                embedding: analysis.embedding
             )
         }
         guard !templates.isEmpty else { throw FaceStoreError.persistFailed }
@@ -116,12 +105,12 @@ final class FaceTemplateStore {
         }
     }
 
-    func bestDistance(to live: VNFeaturePrintObservation) throws -> Float {
-        let enrolled = try loadObservations()
+    func bestDistance(to live: FaceEmbedding) throws -> Float {
+        let enrolled = try loadEmbeddings()
         var best = Float.greatestFiniteMagnitude
         for item in enrolled {
-            let d = try FaceAnalyzer.distance(between: live, and: item)
-            best = min(best, d)
+            let distance = try FaceAnalyzer.distance(between: live, and: item)
+            best = min(best, distance)
         }
         return best
     }

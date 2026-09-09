@@ -37,15 +37,15 @@ There is no telemetry and no network requirement.
 1. Launch **MacBook FaceID**. First run opens a short setup sheet.
 2. Allow **Camera** and **Accessibility**.
 3. Enter your **macOS login password** twice. It is saved only in Keychain.
-4. Sit in good light, look at the camera, and enroll. The app keeps several Vision face-print templates plus a local thumbnail.
+4. Sit in good light, look at the camera, and enroll. The app keeps several Vision landmark embeddings plus a local thumbnail.
 5. On a notched Mac, hover the notch to expand the panel. Enable **Face Unlock** if it is off. Optionally turn on **Open at login**.
 
 Re-enroll and password updates live in the compact Settings sheet (face preview, a few toggles — not a dense preferences window).
 
 ## How unlock works
 
-1. **Enroll** — `VNDetectFaceRectanglesRequest`, `VNDetectFaceCaptureQualityRequest`, and `VNGenerateFaceFeaturePrintRequest` build on-device face templates under `~/Library/Application Support/MacBookFaceID/`.
-2. **Watch** — When the screen locks (or the screen saver starts), the camera starts. Live feature prints are compared with `computeDistance`. A match needs a distance ≤ 0.55, or ≤ 0.38 for an immediate match, with two consecutive hits to reduce accidents.
+1. **Enroll** — `VNDetectFaceLandmarksRequest` and `VNDetectFaceCaptureQualityRequest` build a local landmark embedding (eyes aligned, unit inter-ocular distance) under `~/Library/Application Support/MacBookFaceID/`.
+2. **Watch** — When the screen locks (or the screen saver starts), the camera starts. Live embeddings are compared with RMS distance. A match needs a distance ≤ 0.12, or ≤ 0.075 for an immediate match, with two consecutive hits to reduce accidents.
 3. **Unlock** — On match, the password is read from Keychain and typed with Accessibility (`CGEvent` unicode + Return), the same pattern used by popular Mac face-unlock utilities.
 
 ### Exact behavior (honest)
@@ -70,7 +70,7 @@ Copy in the UI says **Face Unlock**, not Face ID, except for the app name.
 ## Security caveats
 
 - This is **convenience unlock**, not biometric authentication bound to Secure Enclave.
-- Vision face prints can be fooled by look-alikes, photos, or a similar face in good light. Thresholds trade false unlocks against missed unlocks.
+- Vision landmark embeddings can be fooled by look-alikes, photos, or a similar face in good light. Thresholds trade false unlocks against missed unlocks.
 - The login password exists in Keychain so the app can type it. A process running as you, with Keychain and Accessibility access, can do the same.
 - Grant Accessibility only if you accept that this app can post keyboard events.
 - Do not use this on a shared Mac you do not control.

@@ -280,7 +280,7 @@ final class AppModel: ObservableObject {
         do {
             let distance = try await Task.detached(priority: .userInitiated) {
                 let analysis = try FaceAnalyzer.analyze(image)
-                return try FaceTemplateStore().bestDistance(to: analysis.featurePrint)
+                return try FaceTemplateStore().bestDistance(to: analysis.embedding)
             }.value
             let matched = FaceAnalyzer.recordHit(distance: distance, consecutiveHits: &consecutiveHits)
             if matched {
