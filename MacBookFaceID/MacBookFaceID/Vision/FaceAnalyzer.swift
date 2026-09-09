@@ -128,14 +128,14 @@ enum FaceAnalyzer {
             (1, landmarks.rightPupil)
         ]
 
-        var points: [CGPoint] = []
-        points.reserveCapacity(regions.reduce(0) { $0 + $1.0 })
+        var collected: [CGPoint] = []
+        collected.reserveCapacity(regions.reduce(0) { $0 + $1.0 })
         for (count, region) in regions {
-            points.append(contentsOf: resample(points(from: region), count: count))
+            collected.append(contentsOf: resample(regionPoints(region), count: count))
         }
 
-        let leftEye = centroid(points(from: landmarks.leftEye) + points(from: landmarks.leftPupil))
-        let rightEye = centroid(points(from: landmarks.rightEye) + points(from: landmarks.rightPupil))
+        let leftEye = centroid(regionPoints(landmarks.leftEye) + regionPoints(landmarks.leftPupil))
+        let rightEye = centroid(regionPoints(landmarks.rightEye) + regionPoints(landmarks.rightPupil))
         guard let leftEye, let rightEye else {
             throw FaceAnalysisError.noFeaturePrint
         }
@@ -154,8 +154,8 @@ enum FaceAnalyzer {
         let scale = 1 / eyeDistance
 
         var values: [Float] = []
-        values.reserveCapacity(points.count * 2)
-        for point in points {
+        values.reserveCapacity(collected.count * 2)
+        for point in collected {
             let tx = point.x - mid.x
             let ty = point.y - mid.y
             let rx = (tx * cosA - ty * sinA) * scale
@@ -167,7 +167,7 @@ enum FaceAnalyzer {
         return FaceEmbedding(version: FaceEmbedding.currentVersion, values: values)
     }
 
-    private static func points(from region: VNFaceLandmarkRegion2D?) -> [CGPoint] {
+    private static func regionPoints(_ region: VNFaceLandmarkRegion2D?) -> [CGPoint] {
         guard let region, region.pointCount > 0 else { return [] }
         return (0..<region.pointCount).map { region.normalizedPoints[$0] }
     }
