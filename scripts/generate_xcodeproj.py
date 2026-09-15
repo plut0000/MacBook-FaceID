@@ -13,23 +13,36 @@ SWIFT_FILES = [
     "App/MacBookFaceIDApp.swift",
     "App/AppDelegate.swift",
     "App/AppModel.swift",
-    "NotchUI/NotchController.swift",
-    "NotchUI/NotchPanelView.swift",
-    "NotchUI/FaceUnlockAnimationView.swift",
-    "NotchUI/SettingsView.swift",
-    "NotchUI/OnboardingView.swift",
-    "NotchUI/MenuBarContentView.swift",
-    "Camera/CameraManager.swift",
-    "Camera/CameraPreviewView.swift",
-    "Vision/FaceAnalyzer.swift",
-    "Vision/FaceTemplateStore.swift",
-    "Unlock/UnlockCoordinator.swift",
+    "App/MenuBarContentView.swift",
+    "Island/IslandController.swift",
+    "Island/IslandGeometry.swift",
+    "Island/IslandView.swift",
+    "Island/ScanAnimationView.swift",
+    "Enrollment/HeadPose.swift",
+    "Enrollment/EnrollmentSession.swift",
+    "Enrollment/EnrollmentView.swift",
+    "Recognition/FaceAligner.swift",
+    "Recognition/FaceEmbedder.swift",
+    "Recognition/IdentityVault.swift",
+    "Liveness/LivenessEngine.swift",
+    "Credentials/CryptoBox.swift",
+    "Credentials/SessionKeychain.swift",
+    "Credentials/SessionGate.swift",
+    "Unlock/UnlockPipeline.swift",
     "Unlock/ScreenLockObserver.swift",
     "Unlock/AccessibilityTyper.swift",
     "Unlock/DisplayWaker.swift",
-    "Keychain/LoginPasswordKeychain.swift",
+    "Unlock/SpacebarTrigger.swift",
+    "Camera/CameraManager.swift",
+    "Camera/CameraPreviewView.swift",
+    "Settings/SettingsRootView.swift",
+    "Settings/FacePane.swift",
+    "Settings/RecognitionPane.swift",
+    "Settings/CameraPane.swift",
+    "Settings/PasswordPane.swift",
+    "Settings/GeneralPane.swift",
+    "Onboarding/OnboardingView.swift",
     "Permissions/PermissionMonitor.swift",
-    "Support/NotchGeometry.swift",
     "Support/AppConstants.swift",
 ]
 
@@ -47,6 +60,11 @@ FRAMEWORKS = [
     "CoreImage",
     "QuartzCore",
     "Carbon",
+    "CryptoKit",
+    "LocalAuthentication",
+    "CoreML",
+    "CoreVideo",
+    "CoreMedia",
 ]
 
 
@@ -346,7 +364,7 @@ def main() -> None:
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				SDKROOT = macosx;
 """
 
@@ -387,7 +405,7 @@ def main() -> None:
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MacBookFaceID/Resources/Info.plist;
@@ -395,8 +413,8 @@ def main() -> None:
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.1.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.plut0000.MacBookFaceID;
 				PRODUCT_NAME = "MacBook FaceID";
 				SWIFT_EMIT_LOC_STRINGS = YES;

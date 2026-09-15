@@ -4,7 +4,7 @@ import SwiftUI
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private var notchController: NotchController?
+    private var islandController: IslandController?
     private var onboardingWindow: NSWindow?
     private var settingsWindow: NSWindow?
     private var cancellables = Set<AnyCancellable>()
@@ -15,10 +15,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let model = AppModel.shared
         model.start()
 
-        if model.hasNotch {
-            notchController = NotchController(model: model)
-            notchController?.show()
-        }
+        islandController = IslandController(model: model)
+        islandController?.show()
 
         model.$showOnboarding
             .removeDuplicates()
@@ -51,6 +49,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if onboardingWindow == nil {
                 onboardingWindow = makeUtilityWindow(
                     title: "Set up Face Unlock",
+                    width: 520,
+                    height: 640,
                     content: OnboardingView().environmentObject(AppModel.shared)
                 )
                 onboardingWindow?.delegate = self
@@ -67,10 +67,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if settingsWindow == nil {
                 settingsWindow = makeUtilityWindow(
                     title: "Face Unlock",
-                    content: ScrollView {
-                        SettingsView().environmentObject(AppModel.shared)
-                    }
-                    .frame(width: 400, height: 560)
+                    width: 720,
+                    height: 540,
+                    content: SettingsRootView().environmentObject(AppModel.shared)
                 )
                 settingsWindow?.delegate = self
             }
@@ -83,12 +82,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func present(_ window: NSWindow?) {
         guard let window else { return }
-        NSApp.activate(ignoringOtherApps: true)
+        NSApp.activate()
         window.center()
         window.makeKeyAndOrderFront(nil)
     }
 
-    private func makeUtilityWindow<Content: View>(title: String, content: Content) -> NSWindow {
+    private func makeUtilityWindow<Content: View>(
+        title: String,
+        width: CGFloat,
+        height: CGFloat,
+        content: Content
+    ) -> NSWindow {
         let hosting = NSHostingController(rootView: content)
         let window = NSWindow(contentViewController: hosting)
         window.title = title
@@ -96,11 +100,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         window.titlebarAppearsTransparent = true
         window.isReleasedWhenClosed = false
         window.level = .floating
-        let fitted = hosting.view.fittingSize
-        window.setContentSize(NSSize(
-            width: max(fitted.width, 420),
-            height: max(fitted.height, 360)
-        ))
+        window.setContentSize(NSSize(width: width, height: height))
         return window
     }
 }

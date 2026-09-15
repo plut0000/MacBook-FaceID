@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A4332653A440425D93E59A2B"
+               BlueprintIdentifier = "F9018FF4F841446CB97154CD"
                BuildableName = "MacBook FaceID.app"
                BlueprintName = "MacBookFaceID"
                ReferencedContainer = "container:MacBookFaceID.xcodeproj">
@@ -44,7 +44,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A4332653A440425D93E59A2B"
+            BlueprintIdentifier = "F9018FF4F841446CB97154CD"
             BuildableName = "MacBook FaceID.app"
             BlueprintName = "MacBookFaceID"
             ReferencedContainer = "container:MacBookFaceID.xcodeproj">
@@ -61,7 +61,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A4332653A440425D93E59A2B"
+            BlueprintIdentifier = "F9018FF4F841446CB97154CD"
             BuildableName = "MacBook FaceID.app"
             BlueprintName = "MacBookFaceID"
             ReferencedContainer = "container:MacBookFaceID.xcodeproj">

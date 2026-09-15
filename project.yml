@@ -2,15 +2,15 @@ name: MacBookFaceID
 options:
   bundleIdPrefix: com.plut0000
   deploymentTarget:
-    macOS: "13.0"
+    macOS: "14.0"
   xcodeVersion: "15.0"
   createIntermediateGroups: true
 settings:
   base:
-    MARKETING_VERSION: 0.1.0
-    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.2.0
+    CURRENT_PROJECT_VERSION: 2
     SWIFT_VERSION: "5.0"
-    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
     ENABLE_HARDENED_RUNTIME: YES
     CODE_SIGN_IDENTITY: "-"
     CODE_SIGN_STYLE: Automatic
@@ -35,6 +35,9 @@ targets:
           - $(inherited)
           - "@executable_path/../Frameworks"
         COMBINE_HIDPI_IMAGES: YES
+        MARKETING_VERSION: 0.2.0
+        CURRENT_PROJECT_VERSION: 2
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
     entitlements:
       path: MacBookFaceID/MacBookFaceID/Resources/MacBookFaceID.entitlements
     info:

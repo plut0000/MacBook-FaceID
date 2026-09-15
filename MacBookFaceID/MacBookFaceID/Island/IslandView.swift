@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct NotchPanelView: View {
+struct IslandView: View {
     @EnvironmentObject private var model: AppModel
 
     var body: some View {
@@ -17,18 +17,25 @@ struct NotchPanelView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color.black)
-        .clipShape(RoundedRectangle(cornerRadius: model.isExpanded ? 22 : 14, style: .continuous))
-        .onHover { model.setHovering($0) }
+        .clipShape(RoundedRectangle(cornerRadius: model.isExpanded ? 24 : 18, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: model.isExpanded ? 24 : 18, style: .continuous)
+                .stroke(Color.white.opacity(model.hasNotch ? 0.04 : 0.16), lineWidth: 1)
+        )
+        .onHover { hovering in
+            model.setHovering(hovering)
+        }
         .onTapGesture { model.toggleExpanded() }
-        .animation(.spring(response: 0.34, dampingFraction: 0.86), value: model.isExpanded)
+        .animation(.spring(response: 0.38, dampingFraction: 0.82), value: model.isExpanded)
+        .animation(.spring(response: 0.32, dampingFraction: 0.86), value: model.animationPhase)
     }
 
     private var collapsedBar: some View {
         HStack(spacing: 8) {
             Spacer(minLength: 0)
-            FaceUnlockAnimationView(
+            ScanAnimationView(
                 style: model.animationStyle,
-                phase: model.animationPhase == .idle ? (model.status == .watching ? .scanning : .idle) : model.animationPhase,
+                phase: displayPhase,
                 compact: true
             )
             if model.isExpanded {
@@ -39,13 +46,14 @@ struct NotchPanelView: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 14)
     }
 
     private var expandedBody: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center, spacing: 10) {
-                enrollmentThumb
+                ScanAnimationView(style: model.animationStyle, phase: displayPhase, compact: false)
+                    .frame(width: 44, height: 44)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Face Unlock")
                         .font(.system(size: 13, weight: .semibold))
@@ -58,39 +66,13 @@ struct NotchPanelView: View {
                 Spacer(minLength: 0)
             }
 
-            Toggle("Enable Face Unlock", isOn: $model.isEnabled)
-                .toggleStyle(.switch)
-                .font(.system(size: 12))
-                .foregroundStyle(.white)
-                .onChange(of: model.isEnabled, perform: { _ in
-                    model.refreshStatus()
-                    if model.isEnabled && model.lockObserver.isLocked {
-                        model.beginWatching()
-                    } else if !model.isEnabled {
-                        model.stopWatchingIfUnused()
-                    }
-                })
-
-            Picker("Animation", selection: $model.animationStyle) {
-                ForEach(AnimationStyle.allCases) { style in
-                    Text(style.title).tag(style)
-                }
-            }
-            .pickerStyle(.segmented)
-            .controlSize(.small)
-            .help("Minimal is a modern ring. Classic is the iPhone X–era scan.")
-
             HStack(spacing: 8) {
-                Button(model.isEnrolled ? "Re-enroll" : "Enroll") {
-                    if model.isSetupComplete {
-                        model.showSettings = true
-                    } else {
-                        model.showOnboarding = true
-                    }
+                Button(retryTitle) {
+                    model.retryFromIsland()
                 }
-                    .buttonStyle(NotchButtonStyle())
+                .buttonStyle(IslandButtonStyle())
                 Button("Settings") { model.showSettings = true }
-                    .buttonStyle(NotchButtonStyle())
+                    .buttonStyle(IslandButtonStyle())
                 Spacer(minLength: 0)
             }
         }
@@ -99,21 +81,15 @@ struct NotchPanelView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var enrollmentThumb: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(Color.white.opacity(0.08))
-            if let image = model.enrollmentPreview {
-                Image(nsImage: image)
-                    .resizable()
-                    .scaledToFill()
-            } else {
-                Image(systemName: "person.crop.circle")
-                    .foregroundStyle(.white.opacity(0.5))
-            }
-        }
-        .frame(width: 36, height: 36)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    private var displayPhase: UnlockAnimationPhase {
+        if model.animationPhase != .idle { return model.animationPhase }
+        return (model.status == .watching || model.status == .matching) ? .scanning : .idle
+    }
+
+    private var retryTitle: String {
+        if model.animationPhase == .failure { return "Retry" }
+        if model.lockObserver.isLocked { return "Scan" }
+        return model.isEnrolled ? "Identities" : "Enroll"
     }
 
     private var statusDetail: String {
@@ -122,23 +98,25 @@ struct NotchPanelView: View {
             return "Enroll your face and save your login password."
         case .permissionNeeded:
             return "Camera and Accessibility are required."
+        case .sessionLocked:
+            return "Authorize with Touch ID to allow unlock."
         case .enrolled:
             return "Ready. Watching starts when this Mac locks."
         case .watching:
-            return "Camera is watching for your face."
+            return "Looking for a live match."
         case .matching:
-            return "Face matched — unlocking…"
+            return "Match — unlocking…"
         case .unlocked:
             return "Welcome back."
         case .disabled:
             return "Face Unlock is turned off."
         case .failed:
-            return model.bannerMessage ?? "Could not unlock."
+            return model.bannerMessage ?? "Hover to retry."
         }
     }
 }
 
-struct NotchButtonStyle: ButtonStyle {
+struct IslandButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 11, weight: .semibold))

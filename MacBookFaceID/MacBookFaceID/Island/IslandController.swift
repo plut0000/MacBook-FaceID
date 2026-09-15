@@ -1,9 +1,10 @@
 import AppKit
 import Combine
+import CoreGraphics
 import SwiftUI
 
 @MainActor
-final class NotchController: NSObject {
+final class IslandController: NSObject {
     private let model: AppModel
     private var panel: NSPanel?
     private var cancellables = Set<AnyCancellable>()
@@ -15,7 +16,7 @@ final class NotchController: NSObject {
     }
 
     func show() {
-        let geometry = NotchGeometry.current()
+        let geometry = IslandGeometry.current()
         let panel = NSPanel(
             contentRect: geometry.collapsedWindowFrame(),
             styleMask: [.borderless, .nonactivatingPanel, .fullSizeContentView],
@@ -27,15 +28,17 @@ final class NotchController: NSObject {
         panel.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]
         panel.isOpaque = false
         panel.backgroundColor = .clear
-        panel.hasShadow = true
+        panel.hasShadow = !geometry.hasNotch
         panel.hidesOnDeactivate = false
         panel.isMovable = false
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
         panel.becomesKeyOnlyIfNeeded = true
-        panel.animationBehavior = .utilityWindow
+        panel.animationBehavior = .none
+        panel.alphaValue = model.animationsHidden ? 0 : 1
+        panel.ignoresMouseEvents = model.animationsHidden
 
-        let hosting = NSHostingView(rootView: NotchPanelView().environmentObject(model))
+        let hosting = NSHostingView(rootView: IslandView().environmentObject(model))
         hosting.autoresizingMask = [.width, .height]
         panel.contentView = hosting
         self.panel = panel
@@ -49,10 +52,18 @@ final class NotchController: NSObject {
             }
             .store(in: &cancellables)
 
+        model.$animationsHidden
+            .sink { [weak self] hidden in
+                self?.applyVisibility(hidden: hidden)
+            }
+            .store(in: &cancellables)
+
         model.lockObserver.$isLocked
             .removeDuplicates()
             .sink { [weak self] locked in
-                self?.panel?.level = locked ? .screenSaver : .statusBar
+                self?.panel?.level = locked
+                    ? NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.statusWindow)) + 12)
+                    : .statusBar
             }
             .store(in: &cancellables)
 
@@ -68,14 +79,27 @@ final class NotchController: NSObject {
         }
     }
 
+    private func applyVisibility(hidden: Bool) {
+        guard let panel else { return }
+        panel.ignoresMouseEvents = hidden
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.22
+            panel.animator().alphaValue = hidden ? 0 : 1
+        }
+        if !hidden {
+            panel.orderFrontRegardless()
+        }
+    }
+
     private func applyFrame(animated: Bool) {
         guard let panel else { return }
-        let geometry = NotchGeometry.current()
+        let geometry = IslandGeometry.current()
         let frame = model.isExpanded ? geometry.expandedWindowFrame() : geometry.collapsedWindowFrame()
         if animated {
             NSAnimationContext.runAnimationGroup { context in
-                context.duration = 0.32
+                context.duration = 0.42
                 context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                context.allowsImplicitAnimation = true
                 panel.animator().setFrame(frame, display: true)
             }
         } else {

@@ -29,7 +29,7 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>MacBook FaceID uses the built-in camera to enroll your face and watch for a match so it can unlock this Mac. Frames are processed on-device and are not uploaded.</string>
+	<string>MacBook FaceID uses the camera to enroll your face and watch for a match. Frames are processed in memory on this Mac and are not written to disk or uploaded.</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSPrincipalClass</key>
