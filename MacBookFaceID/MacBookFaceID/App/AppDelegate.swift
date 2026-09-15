@@ -49,8 +49,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if onboardingWindow == nil {
                 onboardingWindow = makeUtilityWindow(
                     title: "Set up Face Unlock",
-                    width: 520,
+                    width: 460,
                     height: 640,
+                    resizable: false,
                     content: OnboardingView().environmentObject(AppModel.shared)
                 )
                 onboardingWindow?.delegate = self
@@ -67,8 +68,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if settingsWindow == nil {
                 settingsWindow = makeUtilityWindow(
                     title: "Face Unlock",
-                    width: 720,
-                    height: 540,
+                    width: 740,
+                    height: 520,
+                    resizable: true,
                     content: SettingsRootView().environmentObject(AppModel.shared)
                 )
                 settingsWindow?.delegate = self
@@ -91,16 +93,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         title: String,
         width: CGFloat,
         height: CGFloat,
+        resizable: Bool,
         content: Content
     ) -> NSWindow {
         let hosting = NSHostingController(rootView: content)
         let window = NSWindow(contentViewController: hosting)
         window.title = title
-        window.styleMask = [.titled, .closable, .fullSizeContentView]
-        window.titlebarAppearsTransparent = true
+        var mask: NSWindow.StyleMask = [.titled, .closable]
+        if resizable {
+            mask.insert(.resizable)
+        }
+        window.styleMask = mask
+        window.titlebarAppearsTransparent = false
+        window.titleVisibility = .visible
         window.isReleasedWhenClosed = false
-        window.level = .floating
         window.setContentSize(NSSize(width: width, height: height))
+        window.minSize = NSSize(width: resizable ? 640 : width, height: resizable ? 420 : height)
         return window
     }
 }

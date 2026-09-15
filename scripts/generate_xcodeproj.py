@@ -405,7 +405,7 @@ def main() -> None:
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MacBookFaceID/Resources/Info.plist;
@@ -414,7 +414,7 @@ def main() -> None:
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.plut0000.MacBookFaceID;
 				PRODUCT_NAME = "MacBook FaceID";
 				SWIFT_EMIT_LOC_STRINGS = YES;

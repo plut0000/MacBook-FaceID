@@ -9,9 +9,7 @@ struct OnboardingView: View {
     @State private var errorText: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("MacBook FaceID")
-                .font(.title2.weight(.semibold))
+        VStack(alignment: .leading, spacing: 14) {
             Text(stepTitle)
                 .font(.headline)
 
@@ -23,9 +21,12 @@ struct OnboardingView: View {
                     .foregroundStyle(.red)
             }
 
+            Spacer(minLength: 0)
+
             HStack {
                 if step > 0 && step < 4 {
                     Button("Back") { step -= 1 }
+                        .keyboardShortcut(.cancelAction)
                 }
                 Spacer()
                 if step != 4 {
@@ -35,8 +36,8 @@ struct OnboardingView: View {
                 }
             }
         }
-        .padding(24)
-        .frame(width: 500)
+        .padding(20)
+        .frame(width: 440)
         .onAppear {
             Task { await model.permissions.requestCamera() }
             model.permissions.promptAccessibility()
@@ -45,11 +46,11 @@ struct OnboardingView: View {
 
     private var stepTitle: String {
         switch step {
-        case 0: return "Convenience Face Unlock"
+        case 0: return "Read this first"
         case 1: return "Permissions"
-        case 2: return "Authorize this Mac"
-        case 3: return "Save your login password"
-        default: return "Enroll your face"
+        case 2: return "Authorize"
+        case 3: return "Login password"
+        default: return "Enroll"
         }
     }
 
@@ -57,19 +58,18 @@ struct OnboardingView: View {
     private var stepBody: some View {
         switch step {
         case 0:
-            VStack(alignment: .leading, spacing: 10) {
-                Text("This is not TrueDepth Face ID. A Mac webcam sees a flat 2D image; an iPhone Face ID sensor builds a 3D map. Treat this as convenience, not a security upgrade.")
-                Text("Unlock works by typing your stored password at the lock screen. There is no macOS API that lets a third-party app authorize a login.")
-                Text("Heavy liveness can reject a printed photo or a still image on a phone. It does not reliably defeat a video of you.")
+            VStack(alignment: .leading, spacing: 8) {
+                Text("This Mac has a 2D camera, not Face ID. Unlock types your saved password at the lock screen.")
+                Text("Heavy liveness can reject a printed photo. A video of you may still succeed.")
             }
             .font(.callout)
             .foregroundStyle(.secondary)
         case 1:
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
                 PermissionRow(
                     title: "Camera",
                     granted: model.permissions.cameraGranted,
-                    actionTitle: "Allow Camera"
+                    actionTitle: "Allow"
                 ) {
                     Task {
                         await model.permissions.requestCamera()
@@ -81,25 +81,25 @@ struct OnboardingView: View {
                 PermissionRow(
                     title: "Accessibility",
                     granted: model.permissions.accessibilityTrusted,
-                    actionTitle: "Allow Accessibility"
+                    actionTitle: "Allow"
                 ) {
                     model.permissions.promptAccessibility()
                     if !model.permissions.accessibilityTrusted {
                         model.permissions.openAccessibilitySettings()
                     }
                 }
-                Text("Accessibility is required to type the password into the lock screen. macOS lists this app under Privacy & Security → Accessibility.")
+                Text("Accessibility types the password into the lock screen.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
         case 2:
             VStack(alignment: .leading, spacing: 8) {
-                Text("Face data and your password are encrypted with AES-256-GCM. The key lives in Keychain behind Touch ID or your device password, and is held in memory only while a session is authorized.")
+                Text("Face data and your password are encrypted. The key stays in Keychain behind Touch ID.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
                 if model.session.isAuthorized {
-                    Label("Session authorized", systemImage: "checkmark.shield.fill")
-                        .foregroundStyle(.green)
+                    Label("Authorized", systemImage: "checkmark")
+                        .foregroundStyle(.secondary)
                 } else {
                     Button("Authorize with Touch ID") {
                         Task { await model.session.authorize(prompt: "Create the Face Unlock key") }
@@ -111,16 +111,16 @@ struct OnboardingView: View {
             }
         case 3:
             VStack(alignment: .leading, spacing: 8) {
-                Text("The same password you type at the macOS lock screen. It is encrypted in the vault, never stored as plaintext.")
+                Text("The password you type at the macOS lock screen. Stored encrypted, never as plaintext.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 SecureField("macOS login password", text: $password)
-                SecureField("Confirm password", text: $confirm)
+                SecureField("Confirm", text: $confirm)
             }
         default:
             VStack(alignment: .leading, spacing: 10) {
                 TextField("Identity name", text: $identityName)
-                Text("Turn your head in nine directions. Each frame becomes a 512-number embedding; the image is thrown away.")
+                Text("Nine head poses. Each frame becomes numbers; the image is discarded.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 EnrollmentView(identityName: identityName) {
@@ -132,7 +132,7 @@ struct OnboardingView: View {
 
     private var primaryTitle: String {
         switch step {
-        case 0: return "I understand"
+        case 0: return "Continue"
         case 1: return "Continue"
         case 2: return "Continue"
         case 3: return "Save password"
@@ -192,7 +192,8 @@ struct PermissionRow: View {
     var body: some View {
         HStack {
             Image(systemName: granted ? "checkmark.circle.fill" : "circle")
-                .foregroundStyle(granted ? .green : .secondary)
+                .foregroundStyle(granted ? .secondary : .tertiary)
+                .symbolRenderingMode(.hierarchical)
             Text(title)
             Spacer()
             Button(actionTitle, action: action)

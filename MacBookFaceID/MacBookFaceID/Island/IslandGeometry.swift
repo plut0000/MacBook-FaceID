@@ -60,7 +60,10 @@ struct IslandGeometry: Equatable {
     }
 
     func collapsedWindowFrame() -> CGRect {
-        let extra: CGFloat = hasNotch ? 18 : 28
+        if hasNotch {
+            return notchFrame
+        }
+        let extra: CGFloat = AppConstants.collapsedFloatingExtraWidth
         let width = notchWidth + extra
         let height = notchHeight + AppConstants.collapsedChin
         return CGRect(

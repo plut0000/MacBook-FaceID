@@ -19,11 +19,11 @@ enum HeadPose: String, CaseIterable, Codable, Identifiable {
 
     var title: String {
         switch self {
-        case .center: return "Look at the camera"
-        case .up: return "Tilt your chin up"
-        case .down: return "Tilt your chin down"
-        case .left: return "Turn a little left"
-        case .right: return "Turn a little right"
+        case .center: return "Face the camera"
+        case .up: return "Chin up"
+        case .down: return "Chin down"
+        case .left: return "Turn left"
+        case .right: return "Turn right"
         case .upLeft: return "Up and left"
         case .upRight: return "Up and right"
         case .downLeft: return "Down and left"
@@ -33,13 +33,13 @@ enum HeadPose: String, CaseIterable, Codable, Identifiable {
 
     var hint: String {
         switch self {
-        case .center: return "Face the webcam, eyes open, in good light."
-        case .up: return "Keep your eyes on the camera while you lift your chin."
-        case .down: return "Lower your chin slightly; don’t look at the desk."
-        case .left: return "Rotate your head, not just your eyes."
-        case .right: return "Rotate your head, not just your eyes."
+        case .center: return "Eyes on the webcam."
+        case .up: return "Keep looking at the camera."
+        case .down: return "Don’t look at the desk."
+        case .left, .right:
+            return "Turn your head, not just your eyes."
         case .upLeft, .upRight, .downLeft, .downRight:
-            return "A small diagonal turn is enough — don’t go profile."
+            return "A small turn is enough."
         }
     }
 

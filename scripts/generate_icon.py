@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Generate a simple macOS app icon: dark tile, scan brackets, face hint."""
+"""Generate a sharp original macOS icon: graphite tile, notch pill, hairline scan.
+
+Not a face, not Apple Face ID brackets, not a smile.
+"""
 
 from __future__ import annotations
 
@@ -31,99 +34,108 @@ def write_png(path: Path, size: int, rgba: bytes) -> None:
 
 
 def mix(a: tuple[int, int, int], b: tuple[int, int, int], t: float) -> tuple[int, int, int]:
+    t = max(0.0, min(1.0, t))
     return tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3))  # type: ignore[return-value]
+
+
+def rounded_rect_sdf(px: float, py: float, cx: float, cy: float, hw: float, hh: float, r: float) -> float:
+    dx = abs(px - cx) - (hw - r)
+    dy = abs(py - cy) - (hh - r)
+    outside = math.hypot(max(dx, 0.0), max(dy, 0.0))
+    inside = min(max(dx, dy), 0.0)
+    return outside + inside - r
+
+
+def capsule_sdf(px: float, py: float, x0: float, x1: float, y: float, radius: float) -> float:
+    dx = x1 - x0
+    t = 0.0 if dx == 0 else max(0.0, min(1.0, (px - x0) / dx))
+    return math.hypot(px - (x0 + t * dx), py - y) - radius
+
+
+def coverage(sdf: float, aa: float = 0.85) -> float:
+    return max(0.0, min(1.0, 0.5 - sdf / aa))
+
+
+def stroke_coverage(sdf: float, half: float, aa: float = 0.85) -> float:
+    return coverage(abs(sdf) - half, aa)
+
+
+def blend(dst: list[int], src: tuple[int, int, int], a: float) -> None:
+    if a <= 0:
+        return
+    a = max(0.0, min(1.0, a))
+    ia = 1.0 - a
+    dst[0] = int(dst[0] * ia + src[0] * a)
+    dst[1] = int(dst[1] * ia + src[1] * a)
+    dst[2] = int(dst[2] * ia + src[2] * a)
+    dst[3] = int(min(255, dst[3] + (255 - dst[3]) * a))
 
 
 def draw_icon(size: int) -> bytes:
     px = bytearray(size * size * 4)
-    mid = (size - 1) / 2
-    radius = size * 0.22
-    inner = size * 0.18
+    samples = 3 if size >= 128 else (2 if size >= 32 else 1)
+    aa = max(0.55, size * 0.0028)
 
-    def set_px(x: int, y: int, r: int, g: int, b: int, a: int = 255) -> None:
-        if 0 <= x < size and 0 <= y < size:
+    tile_inset = size * 0.08
+    tile_r = size * 0.205
+    tile_cx = tile_cy = (size - 1) / 2
+    tile_hw = tile_hh = (size - 1) / 2 - tile_inset
+
+    # Notch pill sits in the upper third — the MacBook camera housing, not a face.
+    pill_y = size * 0.40
+    pill_hw = size * (0.20 if size >= 32 else 0.22)
+    pill_hh = size * (0.055 if size >= 32 else 0.07)
+    pill_r = pill_hh
+    scan_y = size * 0.58
+    scan_half = size * 0.13
+    scan_w = max(0.55, size * 0.0075)
+
+    graphite = (22, 22, 24)
+    graphite_hi = (38, 38, 42)
+    mark = (228, 228, 232)
+    mark_dim = (168, 168, 174)
+
+    for y in range(size):
+        for x in range(size):
+            acc = [0.0, 0.0, 0.0, 0.0]
+            for sy in range(samples):
+                for sx in range(samples):
+                    pxf = x + (sx + 0.5) / samples
+                    pyf = y + (sy + 0.5) / samples
+                    pixel = [0, 0, 0, 0]
+
+                    tile = rounded_rect_sdf(pxf, pyf, tile_cx, tile_cy, tile_hw, tile_hh, tile_r)
+                    tcover = coverage(tile, aa)
+                    if tcover > 0:
+                        shade = mix(graphite_hi, graphite, pyf / max(size, 1))
+                        blend(pixel, shade, tcover)
+                        # hairline rim, not a glow
+                        rim = stroke_coverage(tile, 0.0, aa) * 0.22
+                        blend(pixel, (255, 255, 255), rim * tcover)
+
+                    if pixel[3] > 4:
+                        pill = rounded_rect_sdf(pxf, pyf, tile_cx, pill_y, pill_hw, pill_hh, pill_r)
+                        pill_line = stroke_coverage(pill, max(0.6, size * 0.008), aa)
+                        blend(pixel, mark, pill_line)
+
+                        scan = capsule_sdf(pxf, pyf, tile_cx - scan_half, tile_cx + scan_half, scan_y, scan_w)
+                        blend(pixel, mark_dim, coverage(scan, aa) * 0.95)
+
+                    acc[0] += pixel[0]
+                    acc[1] += pixel[1]
+                    acc[2] += pixel[2]
+                    acc[3] += pixel[3]
+
+            n = float(samples * samples)
             i = (y * size + x) * 4
-            px[i : i + 4] = bytes((r, g, b, a))
-
-    def rounded_mask(x: int, y: int) -> float:
-        # Superellipse-ish rounded rect in 0..1 coverage
-        nx = (x + 0.5) / size
-        ny = (y + 0.5) / size
-        pad = 0.08
-        rx, ry = nx * 2 - 1, ny * 2 - 1
-        # Map to rounded square
-        corner = 0.62
-        ax, ay = abs(rx), abs(ry)
-        if ax > 1 or ay > 1:
-            return 0
-        # Distance outside rounded rect
-        cx = max(ax - (1 - corner), 0)
-        cy = max(ay - (1 - corner), 0)
-        d = math.hypot(cx, cy) / corner if corner else 0
-        edge = 1 - d
-        # Soft outer padding
-        if nx < pad or ny < pad or nx > 1 - pad or ny > 1 - pad:
-            border = min(nx, ny, 1 - nx, 1 - ny) / pad
-            return max(0.0, min(edge, border))
-        return max(0.0, min(1.0, edge * 6))
-
-    bg = (18, 18, 22)
-    accent = (230, 230, 235)
-    green = (52, 199, 89)
-
-    for y in range(size):
-        for x in range(size):
-            cover = rounded_mask(x, y)
-            if cover <= 0:
-                set_px(x, y, 0, 0, 0, 0)
-                continue
-            # Subtle vertical gradient
-            t = (y / size) * 0.25
-            r, g, b = mix(bg, (36, 36, 42), t)
-            set_px(x, y, r, g, b, int(255 * min(1, cover)))
-
-    def ring(cx: float, cy: float, rad: float, width: float, color: tuple[int, int, int], arc: bool = False) -> None:
-        for y in range(size):
-            for x in range(size):
-                dx = x + 0.5 - cx
-                dy = y + 0.5 - cy
-                dist = math.hypot(dx, dy)
-                if abs(dist - rad) <= width:
-                    if arc:
-                        ang = math.atan2(dy, dx)
-                        # four gaps like classic Face ID brackets
-                        sector = abs((ang + math.pi) % (math.pi / 2) - math.pi / 4)
-                        if sector < 0.28:
-                            continue
-                    i = (y * size + x) * 4
-                    if px[i + 3] < 8:
-                        continue
-                    px[i] = color[0]
-                    px[i + 1] = color[1]
-                    px[i + 2] = color[2]
-
-    cx = cy = mid
-    ring(cx, cy, size * 0.28, max(1.2, size * 0.018), accent, arc=True)
-    ring(cx, cy, size * 0.20, max(1.0, size * 0.014), mix(accent, green, 0.35), arc=True)
-
-    # Eyes + smile
-    eye_y = cy - size * 0.04
-    for ex in (cx - size * 0.07, cx + size * 0.07):
-        for y in range(size):
-            for x in range(size):
-                if math.hypot(x + 0.5 - ex, y + 0.5 - eye_y) <= size * 0.018:
-                    i = (y * size + x) * 4
-                    if px[i + 3] > 8:
-                        px[i : i + 3] = bytes(accent)
-
-    for y in range(size):
-        for x in range(size):
-            dx = (x + 0.5 - cx) / (size * 0.09)
-            dy = (y + 0.5 - (cy + size * 0.06)) / (size * 0.05)
-            if 0.7 <= dx * dx + dy * dy <= 1.05 and dy > 0:
-                i = (y * size + x) * 4
-                if px[i + 3] > 8:
-                    px[i : i + 3] = bytes(accent)
+            px[i : i + 4] = bytes(
+                (
+                    int(acc[0] / n),
+                    int(acc[1] / n),
+                    int(acc[2] / n),
+                    int(acc[3] / n),
+                )
+            )
 
     return bytes(px)
 

@@ -20,9 +20,9 @@ struct ScanAnimationView: View {
     private var accessibilityText: String {
         switch phase {
         case .idle: return "Face Unlock idle"
-        case .scanning: return "Looking for your face"
+        case .scanning: return "Scanning"
         case .success: return "Unlocked"
-        case .failure: return "Face did not match"
+        case .failure: return "Did not match"
         }
     }
 }
@@ -30,62 +30,42 @@ struct ScanAnimationView: View {
 private struct MinimalScan: View {
     let phase: UnlockAnimationPhase
     let compact: Bool
-    @State private var sweep = false
-    @State private var glow = false
 
     var body: some View {
-        let size: CGFloat = compact ? 22 : 44
-        ZStack {
-            Capsule()
-                .stroke(color.opacity(0.22), lineWidth: compact ? 1.6 : 2.4)
-            Capsule()
-                .trim(from: sweep ? 0.08 : 0.55, to: sweep ? 0.92 : 0.9)
-                .stroke(color, style: StrokeStyle(lineWidth: compact ? 1.8 : 2.6, lineCap: .round))
-                .rotationEffect(.degrees(phase == .scanning ? (sweep ? 180 : 0) : 0))
-                .scaleEffect(glow && phase == .scanning ? 1.06 : 1)
-                .shadow(color: color.opacity(phase == .scanning ? 0.7 : 0), radius: compact ? 3 : 7)
+        let size: CGFloat = compact ? 18 : 36
+        TimelineView(.animation(minimumInterval: 1 / 30, paused: phase != .scanning)) { timeline in
+            let turn = phase == .scanning
+                ? timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 0.95) / 0.95
+                : 0
+            ZStack {
+                Capsule()
+                    .stroke(color.opacity(phase == .idle ? 0.28 : 0.18), lineWidth: compact ? 1.15 : 1.4)
+                Capsule()
+                    .trim(from: 0.08, to: phase == .scanning ? 0.42 : (phase == .idle ? 0.0 : 1))
+                    .stroke(color, style: StrokeStyle(lineWidth: compact ? 1.2 : 1.5, lineCap: .round))
+                    .rotationEffect(.degrees(turn * 360))
+                    .opacity(phase == .scanning ? 1 : (phase == .idle ? 0 : 0.85))
 
-            if phase == .success {
-                Image(systemName: "checkmark")
-                    .font(.system(size: compact ? 10 : 16, weight: .bold))
-                    .foregroundStyle(Color.green)
-                    .transition(.scale.combined(with: .opacity))
-            } else if phase == .failure {
-                Image(systemName: "xmark")
-                    .font(.system(size: compact ? 10 : 15, weight: .bold))
-                    .foregroundStyle(Color.red)
-            } else {
-                Circle()
-                    .fill(color.opacity(0.95))
-                    .frame(width: compact ? 4 : 6, height: compact ? 4 : 6)
+                if phase == .success {
+                    HairlineCheck()
+                        .stroke(AppConstants.successStroke, style: StrokeStyle(lineWidth: compact ? 1.35 : 1.7, lineCap: .round, lineJoin: .round))
+                        .frame(width: size * 0.42, height: size * 0.42)
+                } else if phase == .failure {
+                    HairlineX()
+                        .stroke(AppConstants.failureStroke, style: StrokeStyle(lineWidth: compact ? 1.25 : 1.55, lineCap: .round))
+                        .frame(width: size * 0.34, height: size * 0.34)
+                }
             }
+            .frame(width: size, height: size * 0.78)
         }
-        .frame(width: size, height: size * 0.72)
-        .onChange(of: phase) { _, _ in sync() }
-        .onAppear { sync() }
     }
 
     private var color: Color {
         switch phase {
-        case .idle: return .white.opacity(0.72)
-        case .scanning: return .white
-        case .success: return .green
-        case .failure: return .red
-        }
-    }
-
-    private func sync() {
-        sweep = false
-        glow = false
-        if phase == .scanning {
-            DispatchQueue.main.async {
-                withAnimation(.linear(duration: 1.15).repeatForever(autoreverses: false)) {
-                    sweep = true
-                }
-                withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
-                    glow = true
-                }
-            }
+        case .idle: return .white.opacity(0.7)
+        case .scanning: return .white.opacity(0.92)
+        case .success: return AppConstants.successStroke
+        case .failure: return AppConstants.failureStroke
         }
     }
 }
@@ -93,66 +73,77 @@ private struct MinimalScan: View {
 private struct ClassicScan: View {
     let phase: UnlockAnimationPhase
     let compact: Bool
-    @State private var travel = false
 
     var body: some View {
-        let size: CGFloat = compact ? 24 : 48
-        ZStack {
-            ForEach(0..<4, id: \.self) { index in
-                RoundedRectangle(cornerRadius: compact ? 4 : 7, style: .continuous)
-                    .trim(from: 0.07, to: 0.18)
-                    .stroke(color.opacity(1 - Double(index) * 0.16), style: StrokeStyle(
-                        lineWidth: compact ? 1.5 : 2.2,
-                        lineCap: .round
-                    ))
-                    .padding(CGFloat(index) * (compact ? 2.2 : 3.8))
-                    .rotationEffect(.degrees(Double(index) * 90))
-            }
+        let size: CGFloat = compact ? 18 : 36
+        TimelineView(.animation(minimumInterval: 1 / 30, paused: phase != .scanning)) { timeline in
+            let t = timeline.date.timeIntervalSinceReferenceDate
+            let travel = phase == .scanning ? CGFloat(sin(t * .pi * 1.15) * 0.5 + 0.5) : 0.5
+            ZStack {
+                ForEach(0..<4, id: \.self) { index in
+                    CornerBracket()
+                        .stroke(color.opacity(0.9), style: StrokeStyle(lineWidth: compact ? 1.15 : 1.4, lineCap: .round, lineJoin: .round))
+                        .padding(compact ? 1.5 : 2.5)
+                        .rotationEffect(.degrees(Double(index) * 90))
+                }
 
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [color.opacity(0), color, color.opacity(0)],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .frame(height: compact ? 1.4 : 2)
-                .offset(y: travel ? size * 0.28 : -size * 0.28)
-                .opacity(phase == .scanning ? 1 : 0)
+                Capsule()
+                    .fill(color.opacity(phase == .scanning ? 0.9 : 0))
+                    .frame(width: size * 0.62, height: compact ? 1 : 1.15)
+                    .offset(y: (travel - 0.5) * size * 0.52)
 
-            if phase == .success {
-                Image(systemName: "checkmark")
-                    .font(.system(size: compact ? 10 : 16, weight: .bold))
-                    .foregroundStyle(Color.green)
-            } else if phase == .failure {
-                Image(systemName: "xmark")
-                    .font(.system(size: compact ? 10 : 15, weight: .bold))
-                    .foregroundStyle(Color.red)
+                if phase == .success {
+                    HairlineCheck()
+                        .stroke(AppConstants.successStroke, style: StrokeStyle(lineWidth: compact ? 1.35 : 1.7, lineCap: .round, lineJoin: .round))
+                        .frame(width: size * 0.42, height: size * 0.42)
+                } else if phase == .failure {
+                    HairlineX()
+                        .stroke(AppConstants.failureStroke, style: StrokeStyle(lineWidth: compact ? 1.25 : 1.55, lineCap: .round))
+                        .frame(width: size * 0.34, height: size * 0.34)
+                }
             }
+            .frame(width: size, height: size)
         }
-        .frame(width: size, height: size)
-        .onChange(of: phase) { _, _ in sync() }
-        .onAppear { sync() }
     }
 
     private var color: Color {
         switch phase {
-        case .idle: return .white.opacity(0.75)
-        case .scanning: return .white
-        case .success: return .green
-        case .failure: return .red
+        case .idle: return .white.opacity(0.62)
+        case .scanning: return .white.opacity(0.92)
+        case .success: return AppConstants.successStroke
+        case .failure: return AppConstants.failureStroke
         }
     }
+}
 
-    private func sync() {
-        travel = false
-        if phase == .scanning {
-            DispatchQueue.main.async {
-                withAnimation(.easeInOut(duration: 1.05).repeatForever(autoreverses: true)) {
-                    travel = true
-                }
-            }
-        }
+private struct CornerBracket: Shape {
+    func path(in rect: CGRect) -> Path {
+        let arm = min(rect.width, rect.height) * 0.28
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY + arm))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.minX + arm, y: rect.minY))
+        return path
+    }
+}
+
+private struct HairlineCheck: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX + rect.width * 0.12, y: rect.midY + rect.height * 0.04))
+        path.addLine(to: CGPoint(x: rect.minX + rect.width * 0.38, y: rect.minY + rect.height * 0.78))
+        path.addLine(to: CGPoint(x: rect.minX + rect.width * 0.88, y: rect.minY + rect.height * 0.18))
+        return path
+    }
+}
+
+private struct HairlineX: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.move(to: CGPoint(x: rect.maxX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        return path
     }
 }

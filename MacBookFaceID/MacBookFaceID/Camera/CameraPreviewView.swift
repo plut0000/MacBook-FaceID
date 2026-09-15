@@ -42,21 +42,45 @@ struct CameraPreviewView: NSViewRepresentable {
 struct FaceGuideOverlay: View {
     var pose: HeadPose = .center
     var lockedIn = false
+    var progress: Double = 0
 
     var body: some View {
         GeometryReader { geo in
-            let w = min(geo.size.width * 0.58, 210)
-            let h = w * 1.22
+            let w = min(geo.size.width * 0.52, 188)
+            let h = w * 1.28
             ZStack {
+                Color.black.opacity(0.32)
+                    .mask(
+                        Rectangle()
+                            .overlay {
+                                Ellipse()
+                                    .frame(width: w, height: h)
+                                    .blendMode(.destinationOut)
+                            }
+                            .compositingGroup()
+                    )
+
                 Ellipse()
-                    .stroke(lockedIn ? Color.green.opacity(0.95) : Color.white.opacity(0.88), lineWidth: 2.2)
+                    .stroke(Color.white.opacity(lockedIn ? 0.82 : 0.38), lineWidth: 1)
                     .frame(width: w, height: h)
-                PoseArrow(pose: pose)
-                    .stroke(Color.white.opacity(0.9), style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
-                    .frame(width: w * 0.42, height: h * 0.42)
-                    .offset(arrowOffset(in: CGSize(width: w, height: h)))
+
+                Ellipse()
+                    .trim(from: 0, to: CGFloat(max(progress, lockedIn ? 0.04 : 0)))
+                    .stroke(
+                        Color.white.opacity(0.94),
+                        style: StrokeStyle(lineWidth: 1.6, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .frame(width: w, height: h)
+
+                if pose != .center {
+                    PoseChevron(pose: pose)
+                        .stroke(Color.white.opacity(0.72), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, lineJoin: .round))
+                        .frame(width: 14, height: 14)
+                        .offset(arrowOffset(in: CGSize(width: w, height: h)))
+                }
             }
-            .position(x: geo.size.width / 2, y: geo.size.height / 2)
+            .frame(width: geo.size.width, height: geo.size.height)
         }
         .allowsHitTesting(false)
     }
@@ -79,37 +103,31 @@ struct FaceGuideOverlay: View {
     }
 }
 
-private struct PoseArrow: Shape {
+private struct PoseChevron: Shape {
     var pose: HeadPose
 
     func path(in rect: CGRect) -> Path {
-        if pose == .center {
-            var path = Path()
-            path.addEllipse(in: rect.insetBy(dx: rect.width * 0.32, dy: rect.height * 0.32))
-            return path
+        let angle: CGFloat
+        switch pose {
+        case .up: angle = -.pi / 2
+        case .down: angle = .pi / 2
+        case .left: angle = .pi
+        case .right: angle = 0
+        case .upLeft: angle = -.pi * 0.75
+        case .upRight: angle = -.pi * 0.25
+        case .downLeft: angle = .pi * 0.75
+        case .downRight: angle = .pi * 0.25
+        case .center: angle = 0
+        }
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let length = min(rect.width, rect.height) * 0.42
+        func point(_ theta: CGFloat, _ radius: CGFloat) -> CGPoint {
+            CGPoint(x: center.x + cos(theta) * radius, y: center.y + sin(theta) * radius)
         }
         var path = Path()
-        let start = CGPoint(x: rect.midX, y: rect.midY)
-        let end: CGPoint
-        switch pose {
-        case .up: end = CGPoint(x: rect.midX, y: rect.minY)
-        case .down: end = CGPoint(x: rect.midX, y: rect.maxY)
-        case .left: end = CGPoint(x: rect.minX, y: rect.midY)
-        case .right: end = CGPoint(x: rect.maxX, y: rect.midY)
-        case .upLeft: end = CGPoint(x: rect.minX, y: rect.minY)
-        case .upRight: end = CGPoint(x: rect.maxX, y: rect.minY)
-        case .downLeft: end = CGPoint(x: rect.minX, y: rect.maxY)
-        case .downRight: end = CGPoint(x: rect.maxX, y: rect.maxY)
-        case .center: end = start
-        }
-        path.move(to: start)
-        path.addLine(to: end)
-        let angle = atan2(end.y - start.y, end.x - start.x)
-        let head: CGFloat = 9
-        path.move(to: end)
-        path.addLine(to: CGPoint(x: end.x - head * cos(angle - 0.5), y: end.y - head * sin(angle - 0.5)))
-        path.move(to: end)
-        path.addLine(to: CGPoint(x: end.x - head * cos(angle + 0.5), y: end.y - head * sin(angle + 0.5)))
+        path.move(to: point(angle + 0.85, length))
+        path.addLine(to: point(angle, length * 0.15))
+        path.addLine(to: point(angle - 0.85, length))
         return path
     }
 }

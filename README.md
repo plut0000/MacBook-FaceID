@@ -28,7 +28,7 @@ Only continue if you accept that tradeoff. Do not use this on a shared Mac you d
    open "/Applications/MacBook FaceID.app"
    ```
 
-A release is published when a version tag such as `v0.2.0` is pushed.
+A release is published when a version tag such as `v0.2.1` is pushed.
 
 ## Permissions
 
@@ -120,7 +120,7 @@ Simple panes rather than a dense dump:
 - **Password** — create or replace the encrypted login password
 - **General** — enable, login item, haptics, hide animations, scan style, session auto-lock, About
 
-Click the app icon in About five times for a small probe readout (last similarity and liveness reason).
+Settings uses a standard macOS sidebar + grouped detail. Click the app icon in About five times for a small probe readout (last similarity and liveness reason).
 
 ## Privacy
 
@@ -159,8 +159,8 @@ Optional: regenerate the Xcode project with `python3 scripts/generate_xcodeproj.
 ## Building a release
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag v0.2.1
+git push origin v0.2.1
 ```
 
 GitHub Actions (`macos-latest`) builds Release, packs a zip, and on `v*` tags also a zlib DMG. Pull requests upload zip only (not the whole `dist/` tree).

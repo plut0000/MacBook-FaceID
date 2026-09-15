@@ -42,7 +42,7 @@ jobs:
           chmod +x scripts/package_release.sh
           VERSION="${GITHUB_REF_NAME:-dev}"
           if [[ "${GITHUB_REF_TYPE:-}" != "tag" ]]; then
-            VERSION="0.2.0-${GITHUB_SHA::7}"
+            VERSION="0.2.1-${GITHUB_SHA::7}"
           fi
           APP=".derived/Build/Products/Release/MacBook FaceID.app"
           # PRs and branch dispatches: zip only. Tags keep the compressed DMG.

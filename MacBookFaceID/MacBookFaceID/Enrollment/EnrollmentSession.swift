@@ -105,7 +105,7 @@ final class EnrollmentSession: ObservableObject {
             message = next.title
         } else {
             isRunning = false
-            message = "All poses captured. Images were discarded."
+            message = "Saved. Camera frames were not kept."
         }
     }
 }
