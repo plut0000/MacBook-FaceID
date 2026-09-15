@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="hero-title hero-desc">
+  <title id="hero-title">MacBook Face Unlock island</title>
+  <desc id="hero-desc">A MacBook display with a hardware notch. Face Unlock expands from the notch into a scan pill with a circular ring and a check mark.</desc>
+  <defs>
+    <linearGradient id="lid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5c5c60"/>
+      <stop offset="1" stop-color="#3a3a3c"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c1c1e"/>
+      <stop offset="1" stop-color="#0b0b0d"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <style>
+    .island { fill: #1a1a1c; }
+    .ring { stroke: #30d158; }
+    .muted { fill: #8e8e93; }
+    @media (prefers-color-scheme: light) {
+      .island { fill: #2c2c2e; }
+    }
+  </style>
+  <g filter="url(#soft)">
+    <rect x="48" y="36" width="544" height="348" rx="36" fill="url(#lid)"/>
+    <rect x="62" y="50" width="516" height="318" rx="24" fill="url(#glass)"/>
+    <rect x="268" y="50" width="104" height="22" rx="11" fill="#3a3a3c"/>
+    <rect x="190" y="78" width="260" height="118" rx="28" class="island"/>
+    <circle cx="320" cy="137" r="28" fill="none" class="ring" stroke-width="3"/>
+    <circle cx="320" cy="137" r="16" fill="none" class="ring" stroke-width="2" opacity="0.45"/>
+    <path d="M309 138.5 l7 8 16-18" fill="none" stroke="#30d158" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="320" y="214" text-anchor="middle" class="muted" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13">Welcome back</text>
+  </g>
+</svg>

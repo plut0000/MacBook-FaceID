@@ -4,6 +4,8 @@ Face Unlock for Mac — a notch-native scan that watches for you, then types the
 
 This is a convenience feature built around the built-in (or external) webcam. It is **not** TrueDepth Face ID, it does **not** use the Secure Enclave, and it is **not** a security upgrade.
 
+**Site:** [plut0000.github.io/MacBook-FaceID](https://plut0000.github.io/MacBook-FaceID/) (GitHub Pages). Download, setup, and privacy notes live there; binaries stay on [GitHub Releases](https://github.com/plut0000/MacBook-FaceID/releases/latest).
+
 **Minimum OS:** macOS 14 Sonoma (Apple silicon or Intel). The island sits in the hardware notch on 14″ / 16″ MacBook Pro and notched MacBook Air. On a Mac without a notch, a floating pill appears at the top of the display.
 
 ## Read this first

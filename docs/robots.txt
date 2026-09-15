@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://plut0000.github.io/MacBook-FaceID/sitemap.xml

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy — MacBook FaceID stays on this Mac</title>
+  <meta name="description" content="MacBook FaceID processes camera frames in memory, stores encrypted embeddings on-device, and has no telemetry. No accounts, no cloud sync, no network requirement.">
+  <link rel="canonical" href="https://plut0000.github.io/MacBook-FaceID/privacy/">
+  <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MacBook FaceID">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Privacy — MacBook FaceID stays on this Mac">
+  <meta property="og:description" content="On-device embeddings, encrypted vault, no telemetry. Camera frames are not written to disk.">
+  <meta property="og:url" content="https://plut0000.github.io/MacBook-FaceID/privacy/">
+  <meta property="og:image" content="https://plut0000.github.io/MacBook-FaceID/assets/img/og-image.png">
+  <meta property="og:image:alt" content="MacBook FaceID: Face Unlock for Mac. Convenience webcam unlock, not TrueDepth Face ID.">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Privacy — MacBook FaceID stays on this Mac">
+  <meta name="twitter:description" content="On-device embeddings, encrypted vault, no telemetry. Camera frames are not written to disk.">
+  <meta name="twitter:image" content="https://plut0000.github.io/MacBook-FaceID/assets/img/og-image.png">
+  <meta name="twitter:image:alt" content="MacBook FaceID: Face Unlock for Mac. Convenience webcam unlock, not TrueDepth Face ID.">
+  <link rel="icon" href="/MacBook-FaceID/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/MacBook-FaceID/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/MacBook-FaceID/apple-touch-icon.png">
+  <link rel="stylesheet" href="/MacBook-FaceID/assets/css/site.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://plut0000.github.io/MacBook-FaceID/#website",
+        "url": "https://plut0000.github.io/MacBook-FaceID/",
+        "name": "MacBook FaceID",
+        "publisher": { "@id": "https://plut0000.github.io/MacBook-FaceID/#person" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://plut0000.github.io/MacBook-FaceID/#app",
+        "name": "MacBook FaceID",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "macOS 14 or later",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "author": { "@id": "https://plut0000.github.io/MacBook-FaceID/#person" }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://plut0000.github.io/MacBook-FaceID/#person",
+        "name": "plut0000",
+        "url": "https://github.com/plut0000"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://plut0000.github.io/MacBook-FaceID/privacy/#webpage",
+        "url": "https://plut0000.github.io/MacBook-FaceID/privacy/",
+        "name": "Privacy — MacBook FaceID stays on this Mac",
+        "isPartOf": { "@id": "https://plut0000.github.io/MacBook-FaceID/#website" },
+        "about": { "@id": "https://plut0000.github.io/MacBook-FaceID/#app" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://plut0000.github.io/MacBook-FaceID/" },
+          { "@type": "ListItem", "position": 2, "name": "Privacy", "item": "https://plut0000.github.io/MacBook-FaceID/privacy/" }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/MacBook-FaceID/">
+        <img src="/MacBook-FaceID/assets/img/mark.svg" width="32" height="32" alt="MacBook FaceID mark: a small MacBook with a green status light">
+        MacBook FaceID
+      </a>
+      <input class="nav-check" id="nav" type="checkbox">
+      <label class="nav-toggle" for="nav">Menu</label>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="/MacBook-FaceID/download/">Download</a>
+        <a href="/MacBook-FaceID/setup/">Setup</a>
+        <a href="/MacBook-FaceID/privacy/" aria-current="page">Privacy</a>
+        <a href="https://github.com/plut0000/MacBook-FaceID">GitHub</a>
+        <a class="btn btn-primary" href="https://github.com/plut0000/MacBook-FaceID/releases/latest">Latest release</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/MacBook-FaceID/">Home</a>
+        <span aria-hidden="true">/</span>
+        <span>Privacy</span>
+      </nav>
+      <h1>Privacy</h1>
+      <p class="lede">Face Unlock is local by design. Camera frames, embeddings, and your login password stay on this Mac. This website is static documentation; the app does not phone home.</p>
+    </div>
+
+    <section>
+      <div class="wrap prose">
+        <h2>No telemetry</h2>
+        <p>The app has no analytics, accounts, crash uploader, or cloud sync. There is no network requirement for Face Unlock to run. This GitHub Pages site is separate from the app: opening the site in a browser is ordinary web traffic to GitHub, not something the Mac app does.</p>
+
+        <h2>Camera frames</h2>
+        <p>Frames are processed in memory to enroll and to watch for a match. They are not written to disk and they are not uploaded. During enrollment, each accepted frame becomes a 512-number embedding and the image is thrown away.</p>
+
+        <h2>What is stored on disk</h2>
+        <ul>
+          <li>Encrypted identity embeddings (not photos) in an AES-256-GCM vault under Application Support (<code>~/Library/Application Support/MacBookFaceID/</code>).</li>
+          <li>Your macOS login password, encrypted in that same vault — never as plaintext on disk.</li>
+          <li>A 256-bit vault key in the login Keychain, access-controlled with <code>userPresence</code> (Touch ID or device password). The key is held in memory only while a session is authorized.</li>
+        </ul>
+        <p>The default embedding engine is an original 512-d vector of a 112×112 aligned face. This project does not bundle someone else’s ArcFace <code>.mlpackage</code>. If you drop your own redistributable Core ML model into Application Support, that file is also local to this Mac.</p>
+
+        <h2>Erase</h2>
+        <p>Settings → General can erase enrollment and the vault. That removes the vault files and the Keychain key immediately. You can also delete individual identities under Your Face without wiping the whole vault.</p>
+
+        <h2>What this is not</h2>
+        <p>On-device does not mean Secure Enclave Face ID. A process running as you, with an authorized session and Accessibility, can type the same password. Grant Accessibility only if you accept that this app can post keyboard events. Details and first-run steps are on <a href="/MacBook-FaceID/setup/">setup</a>.</p>
+        <p>Source: <a href="https://github.com/plut0000/MacBook-FaceID">github.com/plut0000/MacBook-FaceID</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <div class="foot-brand">
+          <img src="/MacBook-FaceID/assets/img/mark.svg" width="28" height="28" alt="MacBook FaceID mark: a small MacBook with a green status light">
+          MacBook FaceID
+        </div>
+        <p>Free macOS utility. Convenience Face Unlock via webcam and Accessibility — not Apple Face ID.</p>
+      </div>
+      <div>
+        <strong>Product</strong>
+        <ul>
+          <li><a href="/MacBook-FaceID/">Home</a></li>
+          <li><a href="/MacBook-FaceID/download/">Download</a></li>
+          <li><a href="/MacBook-FaceID/setup/">Setup</a></li>
+          <li><a href="/MacBook-FaceID/privacy/">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <strong>Source</strong>
+        <ul>
+          <li><a href="https://github.com/plut0000/MacBook-FaceID">Repository</a></li>
+          <li><a href="https://github.com/plut0000/MacBook-FaceID/releases">Releases</a></li>
+          <li><a href="https://github.com/plut0000/MacBook-FaceID/blob/main/README.md">README</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
