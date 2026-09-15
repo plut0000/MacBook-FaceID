@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Setup &amp; permissions — MacBook FaceID</title>
+  <meta name="description" content="First-run setup for MacBook FaceID: Camera, Accessibility, Touch ID session, encrypted login password, and nine-pose face enrollment on macOS 14+.">
+  <link rel="canonical" href="https://plut0000.github.io/MacBook-FaceID/setup/">
+  <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MacBook FaceID">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Setup &amp; permissions — MacBook FaceID">
+  <meta property="og:description" content="Camera, Accessibility, Touch ID, password vault, and nine-pose enrollment. What Face Unlock can and cannot do.">
+  <meta property="og:url" content="https://plut0000.github.io/MacBook-FaceID/setup/">
+  <meta property="og:image" content="https://plut0000.github.io/MacBook-FaceID/assets/img/og-image.png">
+  <meta property="og:image:alt" content="MacBook FaceID: Face Unlock for Mac. Convenience webcam unlock, not TrueDepth Face ID.">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Setup &amp; permissions — MacBook FaceID">
+  <meta name="twitter:description" content="Camera, Accessibility, Touch ID, password vault, and nine-pose enrollment.">
+  <meta name="twitter:image" content="https://plut0000.github.io/MacBook-FaceID/assets/img/og-image.png">
+  <meta name="twitter:image:alt" content="MacBook FaceID: Face Unlock for Mac. Convenience webcam unlock, not TrueDepth Face ID.">
+  <link rel="icon" href="/MacBook-FaceID/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/MacBook-FaceID/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/MacBook-FaceID/apple-touch-icon.png">
+  <link rel="stylesheet" href="/MacBook-FaceID/assets/css/site.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://plut0000.github.io/MacBook-FaceID/#website",
+        "url": "https://plut0000.github.io/MacBook-FaceID/",
+        "name": "MacBook FaceID",
+        "publisher": { "@id": "https://plut0000.github.io/MacBook-FaceID/#person" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://plut0000.github.io/MacBook-FaceID/#app",
+        "name": "MacBook FaceID",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "macOS 14 or later",
+        "softwareHelp": "https://plut0000.github.io/MacBook-FaceID/setup/",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "author": { "@id": "https://plut0000.github.io/MacBook-FaceID/#person" }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://plut0000.github.io/MacBook-FaceID/#person",
+        "name": "plut0000",
+        "url": "https://github.com/plut0000"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://plut0000.github.io/MacBook-FaceID/setup/#webpage",
+        "url": "https://plut0000.github.io/MacBook-FaceID/setup/",
+        "name": "Setup & permissions — MacBook FaceID",
+        "isPartOf": { "@id": "https://plut0000.github.io/MacBook-FaceID/#website" },
+        "about": { "@id": "https://plut0000.github.io/MacBook-FaceID/#app" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://plut0000.github.io/MacBook-FaceID/" },
+          { "@type": "ListItem", "position": 2, "name": "Setup", "item": "https://plut0000.github.io/MacBook-FaceID/setup/" }
+        ]
+      },
+      {
+        "@type": "HowTo",
+        "name": "Set up MacBook FaceID",
+        "description": "Grant permissions, authorize a session, save the login password, and enroll a face.",
+        "step": [
+          { "@type": "HowToStep", "name": "Read the warning", "text": "Accept that this is convenience unlock, not TrueDepth Face ID." },
+          { "@type": "HowToStep", "name": "Allow Camera and Accessibility", "text": "Required to see your face and type the password at the lock screen." },
+          { "@type": "HowToStep", "name": "Authorize with Touch ID", "text": "Creates or unwraps the AES vault key in Keychain (userPresence)." },
+          { "@type": "HowToStep", "name": "Save the macOS login password", "text": "Stored encrypted in the vault, never as plaintext on disk." },
+          { "@type": "HowToStep", "name": "Enroll nine head directions", "text": "Each frame becomes a 512-number embedding; the image is discarded." }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/MacBook-FaceID/">
+        <img src="/MacBook-FaceID/assets/img/mark.svg" width="32" height="32" alt="MacBook FaceID mark: a small MacBook with a green status light">
+        MacBook FaceID
+      </a>
+      <input class="nav-check" id="nav" type="checkbox">
+      <label class="nav-toggle" for="nav">Menu</label>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="/MacBook-FaceID/download/">Download</a>
+        <a href="/MacBook-FaceID/setup/" aria-current="page">Setup</a>
+        <a href="/MacBook-FaceID/privacy/">Privacy</a>
+        <a href="https://github.com/plut0000/MacBook-FaceID">GitHub</a>
+        <a class="btn btn-primary" href="https://github.com/plut0000/MacBook-FaceID/releases/latest">Latest release</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/MacBook-FaceID/">Home</a>
+        <span aria-hidden="true">/</span>
+        <span>Setup</span>
+      </nav>
+      <h1>Setup &amp; permissions</h1>
+      <p class="lede">First launch opens a short sheet. Grant Camera and Accessibility, authorize a session, save the same password you type at the lock screen, then enroll.</p>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <h2 class="section-title">Permissions</h2>
+        <p class="section-lede">All of these are required for unlock to work. There is no telemetry and no network requirement.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Permission</th>
+                <th scope="col">Why</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Camera</td>
+                <td>See your face. Frames are processed in memory and are not written to disk.</td>
+              </tr>
+              <tr>
+                <td>Accessibility</td>
+                <td>Type the saved password into the lock-screen field. Enable <strong>MacBook FaceID</strong> in System Settings → Privacy &amp; Security → Accessibility.</td>
+              </tr>
+              <tr>
+                <td>Touch ID / device password</td>
+                <td>Gates the AES key in Keychain that encrypts embeddings and the login password (<code>userPresence</code>).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap prose">
+        <h2>First run</h2>
+        <ol>
+          <li>Launch <strong>MacBook FaceID</strong> and read the warning. This is not TrueDepth Face ID. Unlock works by typing a stored password.</li>
+          <li>Allow <strong>Camera</strong> and <strong>Accessibility</strong>.</li>
+          <li>Authorize a session with Touch ID (or your device password). That creates or unwraps the vault key.</li>
+          <li>Enter your Mac login password once. It is stored encrypted, never as plaintext on disk.</li>
+          <li>Enroll: the app walks you through <strong>nine head directions</strong>. Each accepted frame becomes a 512-number embedding; the image is discarded.</li>
+        </ol>
+        <p>You can enroll more identities later (glasses, beard, lighting) and toggle any of them off without deleting.</p>
+
+        <h2>After enrollment</h2>
+        <ul>
+          <li>On a notched Mac, hover the notch to expand the island. Enable Face Unlock if it is off. Optionally turn on Open at login.</li>
+          <li>Triggers live in Settings → Recognition: on lock, on wake, and space bar at the lock screen (any combination).</li>
+          <li>Scan style is Minimal or Classic — cosmetic only. You can hide animations entirely in General; watching still runs.</li>
+          <li>Wrong saved password: one attempt, then Unlock failed. Update it in Settings → Password.</li>
+        </ul>
+
+        <h2>Settings panes</h2>
+        <ul>
+          <li><strong>Your Face</strong> — identities, enable/disable, enroll another, delete</li>
+          <li><strong>Recognition</strong> — triggers, similarity threshold, liveness</li>
+          <li><strong>Camera</strong> — built-in vs external display cameras</li>
+          <li><strong>Password</strong> — create or replace the encrypted login password</li>
+          <li><strong>General</strong> — enable, login item, haptics, hide animations, scan style, session auto-lock, About</li>
+        </ul>
+        <p>Click the app icon in About five times for a small probe readout (last similarity and liveness reason).</p>
+
+        <h2>Limits to expect</h2>
+        <ul>
+          <li>Lid closed: nothing happens until the camera can see you.</li>
+          <li>Display asleep: the app tries to wake the panel, then types. You may still need one lid/key/trackpad wake if the password field is not up yet.</li>
+          <li>FileVault / EFI pre-boot, or the login window before any user session: <strong>cannot unlock</strong>.</li>
+          <li>Fast User Switching / another user’s login window: not supported.</li>
+          <li>The island <em>tries</em> to stay visible on the lock wallpaper. Unlock can still proceed if macOS hides the animation.</li>
+        </ul>
+        <p>Need the binary first? <a href="/MacBook-FaceID/download/">Download the latest release</a>. Data handling is on the <a href="/MacBook-FaceID/privacy/">privacy</a> page.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <div class="foot-brand">
+          <img src="/MacBook-FaceID/assets/img/mark.svg" width="28" height="28" alt="MacBook FaceID mark: a small MacBook with a green status light">
+          MacBook FaceID
+        </div>
+        <p>Free macOS utility. Convenience Face Unlock via webcam and Accessibility — not Apple Face ID.</p>
+      </div>
+      <div>
+        <strong>Product</strong>
+        <ul>
+          <li><a href="/MacBook-FaceID/">Home</a></li>
+          <li><a href="/MacBook-FaceID/download/">Download</a></li>
+          <li><a href="/MacBook-FaceID/setup/">Setup</a></li>
+          <li><a href="/MacBook-FaceID/privacy/">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <strong>Source</strong>
+        <ul>
+          <li><a href="https://github.com/plut0000/MacBook-FaceID">Repository</a></li>
+          <li><a href="https://github.com/plut0000/MacBook-FaceID/releases">Releases</a></li>
+          <li><a href="https://github.com/plut0000/MacBook-FaceID/blob/main/README.md">README</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
