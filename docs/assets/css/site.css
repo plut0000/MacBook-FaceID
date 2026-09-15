@@ -184,6 +184,12 @@ a:hover {
   color: var(--muted);
 }
 
+.site-nav .btn-primary,
+.site-nav .btn-primary:hover,
+.site-nav a.btn-primary[aria-current="page"] {
+  color: var(--fill-ink);
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
