@@ -8,20 +8,15 @@ struct MacBookFaceIDApp: App {
     var body: some Scene {
         MenuBarExtra(
             AppConstants.featureName,
-            systemImage: model.status.symbolName,
-            isInserted: Binding(
-                get: { !model.hasNotch },
-                set: { _ in }
-            )
+            systemImage: model.status.symbolName
         ) {
             MenuBarContentView()
                 .environmentObject(model)
         }
         .menuBarExtraStyle(.window)
 
-        // Keeps a Settings scene so the app has a SwiftUI lifecycle target.
         Settings {
-            SettingsView()
+            SettingsRootView()
                 .environmentObject(model)
         }
     }

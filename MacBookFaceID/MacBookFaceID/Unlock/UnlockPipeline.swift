@@ -1,7 +1,9 @@
 import Foundation
 
-enum UnlockCoordinatorError: LocalizedError, Equatable {
+enum UnlockPipelineError: LocalizedError, Equatable {
     case disabled
+    case sessionLocked
+    case notAtLockScreen
     case notReady
     case cooldown
     case stillLocked
@@ -10,6 +12,10 @@ enum UnlockCoordinatorError: LocalizedError, Equatable {
         switch self {
         case .disabled:
             return "Face Unlock is turned off."
+        case .sessionLocked:
+            return "The Face Unlock session is locked. Authorize with Touch ID first."
+        case .notAtLockScreen:
+            return "The Mac is not at the lock screen."
         case .notReady:
             return "Enrollment, camera, Accessibility, or a saved password is missing."
         case .cooldown:
@@ -21,7 +27,7 @@ enum UnlockCoordinatorError: LocalizedError, Equatable {
 }
 
 @MainActor
-final class UnlockCoordinator {
+final class UnlockPipeline {
     private var lastAttempt: Date = .distantPast
     private var failedAttempts = 0
 
@@ -33,11 +39,9 @@ final class UnlockCoordinator {
         Date().timeIntervalSince(lastAttempt) >= AppConstants.unlockCooldown && failedAttempts < 3
     }
 
-    func performUnlock() async throws {
-        guard canAttempt() else { throw UnlockCoordinatorError.cooldown }
+    func performUnlock(password: String) async throws {
+        guard canAttempt() else { throw UnlockPipelineError.cooldown }
         lastAttempt = Date()
-
-        let password = try LoginPasswordKeychain.load()
 
         try await Task.detached(priority: .userInitiated) {
             try AccessibilityTyper.unlock(with: password)
@@ -46,7 +50,7 @@ final class UnlockCoordinator {
         try await Task.sleep(nanoseconds: 1_400_000_000)
         if ScreenLockObserver.readLocked() {
             failedAttempts += 1
-            throw UnlockCoordinatorError.stillLocked
+            throw UnlockPipelineError.stillLocked
         }
         failedAttempts = 0
     }

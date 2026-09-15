@@ -2,6 +2,7 @@ import AVFoundation
 import AppKit
 import Combine
 import CoreImage
+import CoreMedia
 import QuartzCore
 
 enum CameraError: LocalizedError {
@@ -21,19 +22,32 @@ enum CameraError: LocalizedError {
     }
 }
 
+struct CameraChoice: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let isBuiltIn: Bool
+}
+
 final class CameraManager: NSObject, ObservableObject {
     let session = AVCaptureSession()
 
     @Published private(set) var isRunning = false
     @Published private(set) var lastError: String?
+    @Published private(set) var devices: [CameraChoice] = []
+    @Published var selectedDeviceID: String? {
+        didSet {
+            if oldValue != selectedDeviceID {
+                reconfigure()
+            }
+        }
+    }
 
-    /// Invoked on the camera queue. Keep the callback short.
     var onFrame: ((CGImage) -> Void)?
 
     private let latestLock = NSLock()
     private var latestImage: CGImage?
+    private var currentInput: AVCaptureDeviceInput?
 
-    /// Most recent frame, safe to read from any queue.
     var latestFrame: CGImage? {
         latestLock.lock()
         defer { latestLock.unlock() }
@@ -45,6 +59,18 @@ final class CameraManager: NSObject, ObservableObject {
     private var configured = false
     private var lastFrameTime: CFTimeInterval = 0
     private let ciContext = CIContext(options: [.useSoftwareRenderer: false])
+
+    override init() {
+        super.init()
+        refreshDevices()
+    }
+
+    func refreshDevices() {
+        devices = Self.listCameras()
+        if selectedDeviceID == nil {
+            selectedDeviceID = devices.first(where: \.isBuiltIn)?.id ?? devices.first?.id
+        }
+    }
 
     func start() {
         DispatchQueue.main.async { self.lastError = nil }
@@ -75,12 +101,36 @@ final class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    func selectDevice(id: String?) {
+        DispatchQueue.main.async {
+            self.selectedDeviceID = id
+        }
+    }
+
+    private func reconfigure() {
+        queue.async { [weak self] in
+            guard let self else { return }
+            self.session.beginConfiguration()
+            if let currentInput {
+                self.session.removeInput(currentInput)
+                self.currentInput = nil
+            }
+            self.configured = false
+            self.session.commitConfiguration()
+            do {
+                try self.configureIfNeeded()
+            } catch {
+                DispatchQueue.main.async { self.lastError = error.localizedDescription }
+            }
+        }
+    }
+
     private func configureIfNeeded() throws {
         if configured { return }
         session.beginConfiguration()
         session.sessionPreset = .medium
 
-        guard let device = Self.preferredCamera() else {
+        guard let device = resolveDevice() else {
             session.commitConfiguration()
             throw CameraError.noDevice
         }
@@ -91,17 +141,22 @@ final class CameraManager: NSObject, ObservableObject {
             throw CameraError.cannotAddInput
         }
         session.addInput(input)
+        currentInput = input
 
-        output.alwaysDiscardsLateVideoFrames = true
-        output.videoSettings = [
-            kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32BGRA)
-        ]
-        output.setSampleBufferDelegate(self, queue: queue)
-        guard session.canAddOutput(output) else {
-            session.commitConfiguration()
-            throw CameraError.cannotAddOutput
+        if output.sampleBufferDelegate == nil {
+            output.alwaysDiscardsLateVideoFrames = true
+            output.videoSettings = [
+                kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32BGRA)
+            ]
+            output.setSampleBufferDelegate(self, queue: queue)
         }
-        session.addOutput(output)
+        if session.outputs.isEmpty {
+            guard session.canAddOutput(output) else {
+                session.commitConfiguration()
+                throw CameraError.cannotAddOutput
+            }
+            session.addOutput(output)
+        }
         if let connection = output.connection(with: .video), connection.isVideoMirroringSupported {
             connection.isVideoMirrored = true
         }
@@ -110,28 +165,44 @@ final class CameraManager: NSObject, ObservableObject {
         configured = true
     }
 
-    /// Prefer the built-in FaceTime camera over Continuity Camera.
-    static func preferredCamera() -> AVCaptureDevice? {
-        var types: [AVCaptureDevice.DeviceType] = [.builtInWideAngleCamera]
-        if #available(macOS 14.0, *) {
-            types.append(.continuityCamera)
+    private func resolveDevice() -> AVCaptureDevice? {
+        if let id = selectedDeviceID, let match = AVCaptureDevice(uniqueID: id) {
+            return match
         }
+        return Self.listCaptureDevices().first
+    }
+
+    static func listCameras() -> [CameraChoice] {
+        listCaptureDevices().map { device in
+            let builtIn = device.deviceType == .builtInWideAngleCamera
+                || device.localizedName.localizedCaseInsensitiveContains("FaceTime")
+            return CameraChoice(id: device.uniqueID, name: device.localizedName, isBuiltIn: builtIn)
+        }
+    }
+
+    static func listCaptureDevices() -> [AVCaptureDevice] {
+        var types: [AVCaptureDevice.DeviceType] = [.builtInWideAngleCamera]
+        types.append(.continuityCamera)
+        types.append(.external)
 
         let discovery = AVCaptureDevice.DiscoverySession(
             deviceTypes: types,
             mediaType: .video,
             position: .unspecified
         )
-
-        if let builtIn = discovery.devices.first(where: { $0.deviceType == .builtInWideAngleCamera }) {
-            return builtIn
+        var seen = Set<String>()
+        var unique: [AVCaptureDevice] = []
+        for device in discovery.devices {
+            if seen.insert(device.uniqueID).inserted {
+                unique.append(device)
+            }
         }
-        if let faceTime = discovery.devices.first(where: {
-            $0.localizedName.localizedCaseInsensitiveContains("FaceTime")
-        }) {
-            return faceTime
+        return unique.sorted { lhs, rhs in
+            let leftBuiltIn = lhs.deviceType == .builtInWideAngleCamera
+            let rightBuiltIn = rhs.deviceType == .builtInWideAngleCamera
+            if leftBuiltIn != rightBuiltIn { return leftBuiltIn }
+            return lhs.localizedName < rhs.localizedName
         }
-        return discovery.devices.first ?? AVCaptureDevice.default(for: .video)
     }
 }
 

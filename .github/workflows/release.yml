@@ -42,7 +42,7 @@ jobs:
           chmod +x scripts/package_release.sh
           VERSION="${GITHUB_REF_NAME:-dev}"
           if [[ "${GITHUB_REF_TYPE:-}" != "tag" ]]; then
-            VERSION="0.1.0-${GITHUB_SHA::7}"
+            VERSION="0.2.0-${GITHUB_SHA::7}"
           fi
           APP=".derived/Build/Products/Release/MacBook FaceID.app"
           # PRs and branch dispatches: zip only. Tags keep the compressed DMG.
@@ -75,6 +75,6 @@ jobs:
 
             After download: drag to Applications, then right-click → Open (or `xattr -cr`).
 
-            Grant Camera, Accessibility, and save your login password in Keychain during setup.
+            Grant Camera and Accessibility, authorize with Touch ID, enroll your face, and save your login password during setup.
 
-            This is convenience unlock — not Secure Enclave Face ID. See the README for behavior and caveats.
+            This is convenience unlock — not Secure Enclave Face ID. A 2D webcam is not a TrueDepth sensor. See the README.

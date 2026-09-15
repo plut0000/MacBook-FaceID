@@ -6,7 +6,7 @@ struct MenuBarContentView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 10) {
-                FaceUnlockAnimationView(style: model.animationStyle, phase: displayPhase)
+                ScanAnimationView(style: model.animationStyle, phase: displayPhase)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Face Unlock")
                         .font(.headline)
@@ -17,18 +17,22 @@ struct MenuBarContentView: View {
             }
 
             Toggle("Enable Face Unlock", isOn: $model.isEnabled)
-            Picker("Animation", selection: $model.animationStyle) {
-                ForEach(AnimationStyle.allCases) { style in
-                    Text(style.title).tag(style)
+                .onChange(of: model.isEnabled) { _, enabled in
+                    model.refreshStatus()
+                    if enabled && model.lockObserver.isLocked {
+                        model.beginWatching()
+                    } else if !enabled {
+                        model.stopWatchingIfUnused()
+                    }
                 }
-            }
-            .pickerStyle(.segmented)
 
             HStack {
-                Button(model.isEnrolled ? "Re-enroll" : "Enroll") {
-                    model.showOnboarding = true
-                }
                 Button("Settings") { model.showSettings = true }
+                if !model.session.isAuthorized {
+                    Button("Authorize") {
+                        Task { await model.session.authorize() }
+                    }
+                }
             }
 
             Divider()
