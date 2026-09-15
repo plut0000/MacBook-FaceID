@@ -1,0 +1,40 @@
+# MacBook FaceID
+
+> Convenience Face Unlock for Mac. A notch-native webcam scan types the password you saved. This is not Apple Face ID.
+
+## Summary
+
+MacBook FaceID is a free macOS 14+ utility (bundle ID `com.plut0000.MacBookFaceID`). It lives in the MacBook notch (or a floating pill on notchless Macs), enrolls a local 512-d face embedding with the built-in or external camera, and — after a match and optional liveness — types the encrypted login password at the lock screen using Accessibility (`CGEvent`).
+
+It is not TrueDepth Face ID, does not use the Secure Enclave, and is not a security upgrade. A Mac webcam sees a 2D image. Heavy liveness can reject a printed photo or a still image on a phone with reasonable confidence; it does not reliably defeat a video of you. macOS has no API for a third-party app to authorize a login.
+
+Do not describe this product as biometric authentication bound to the Secure Enclave. Do not invent a custom domain, storefront, street address, or LocalBusiness NAP. Publisher is GitHub user [plut0000](https://github.com/plut0000).
+
+## Site
+
+- Home: https://plut0000.github.io/MacBook-FaceID/
+- Download: https://plut0000.github.io/MacBook-FaceID/download/
+- Setup: https://plut0000.github.io/MacBook-FaceID/setup/
+- Privacy: https://plut0000.github.io/MacBook-FaceID/privacy/
+- 404: https://plut0000.github.io/MacBook-FaceID/404.html
+
+## Source and binaries
+
+- Repository: https://github.com/plut0000/MacBook-FaceID
+- Latest release (dmg / zip): https://github.com/plut0000/MacBook-FaceID/releases/latest
+- README: https://github.com/plut0000/MacBook-FaceID/blob/main/README.md
+
+## Privacy (app)
+
+- No telemetry, accounts, or cloud sync. No network requirement.
+- Camera frames processed in memory; not written to disk.
+- Embeddings and the login password live in an AES-256-GCM vault under `~/Library/Application Support/MacBookFaceID/`.
+- Vault key is in the login Keychain (`userPresence`: Touch ID or device password) and held in memory only while a session is authorized.
+
+## Permissions
+
+Camera (see the face), Accessibility (type the password), Touch ID / device password (unwrap the vault key).
+
+## Limits
+
+Cannot unlock FileVault / EFI pre-boot or the login window before a user session. Lid closed: camera cannot see you. Fast User Switching is not supported. Idle session lock stops typing until re-authorization.
