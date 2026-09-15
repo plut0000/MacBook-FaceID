@@ -10,24 +10,34 @@ struct IslandView: View {
 
             if model.isExpanded {
                 expandedBody
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-            } else {
+                    .transition(.opacity.combined(with: .offset(y: -6)))
+            } else if !model.hasNotch {
                 Color.clear.frame(height: AppConstants.collapsedChin)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color.black)
-        .clipShape(RoundedRectangle(cornerRadius: model.isExpanded ? 24 : 18, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: model.isExpanded ? 24 : 18, style: .continuous)
-                .stroke(Color.white.opacity(model.hasNotch ? 0.04 : 0.16), lineWidth: 1)
-        )
+        .clipShape(islandClip)
         .onHover { hovering in
             model.setHovering(hovering)
         }
         .onTapGesture { model.toggleExpanded() }
-        .animation(.spring(response: 0.38, dampingFraction: 0.82), value: model.isExpanded)
-        .animation(.spring(response: 0.32, dampingFraction: 0.86), value: model.animationPhase)
+        .animation(AppConstants.islandSpring, value: model.isExpanded)
+        .animation(AppConstants.islandSpring, value: model.animationPhase)
+    }
+
+    private var islandClip: IslandClip {
+        IslandClip(
+            topRadius: model.hasNotch ? 0 : bottomRadius,
+            bottomRadius: bottomRadius
+        )
+    }
+
+    private var bottomRadius: CGFloat {
+        if model.isExpanded {
+            return AppConstants.expandedIslandRadius
+        }
+        return model.hasNotch ? AppConstants.collapsedNotchRadius : AppConstants.collapsedFloatingRadius
     }
 
     private var collapsedBar: some View {
@@ -40,33 +50,24 @@ struct IslandView: View {
             )
             if model.isExpanded {
                 Text(model.status.label)
-                    .font(.system(size: 11, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.92))
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.86))
                     .transition(.opacity)
             }
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, 12)
     }
 
     private var expandedBody: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .center, spacing: 10) {
-                ScanAnimationView(style: model.animationStyle, phase: displayPhase, compact: false)
-                    .frame(width: 44, height: 44)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Face Unlock")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(.white)
-                    Text(statusDetail)
-                        .font(.system(size: 11))
-                        .foregroundStyle(.white.opacity(0.65))
-                        .lineLimit(2)
-                }
-                Spacer(minLength: 0)
-            }
+        VStack(alignment: .leading, spacing: 10) {
+            Text(statusDetail)
+                .font(.system(size: 11))
+                .foregroundStyle(.white.opacity(0.52))
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
 
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Button(retryTitle) {
                     model.retryFromIsland()
                 }
@@ -76,8 +77,8 @@ struct IslandView: View {
                 Spacer(minLength: 0)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 14)
+        .padding(.horizontal, 14)
+        .padding(.bottom, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -95,23 +96,23 @@ struct IslandView: View {
     private var statusDetail: String {
         switch model.status {
         case .needsSetup:
-            return "Enroll your face and save your login password."
+            return "Enroll a face and save the login password."
         case .permissionNeeded:
             return "Camera and Accessibility are required."
         case .sessionLocked:
             return "Authorize with Touch ID to allow unlock."
         case .enrolled:
-            return "Ready. Watching starts when this Mac locks."
+            return "Watching starts when this Mac locks."
         case .watching:
-            return "Looking for a live match."
+            return "Scanning."
         case .matching:
-            return "Match — unlocking…"
+            return "Unlocking…"
         case .unlocked:
-            return "Welcome back."
+            return "Unlocked."
         case .disabled:
-            return "Face Unlock is turned off."
+            return "Face Unlock is off."
         case .failed:
-            return model.bannerMessage ?? "Hover to retry."
+            return model.bannerMessage ?? "No match. Hover to retry."
         }
     }
 }
@@ -119,11 +120,35 @@ struct IslandView: View {
 struct IslandButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 11, weight: .semibold))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(Color.white.opacity(configuration.isPressed ? 0.22 : 0.12))
-            .foregroundStyle(.white)
+            .font(.system(size: 11, weight: .medium))
+            .padding(.horizontal, 9)
+            .padding(.vertical, 3.5)
+            .background(Color.white.opacity(configuration.isPressed ? 0.16 : 0.08))
+            .foregroundStyle(.white.opacity(0.9))
             .clipShape(Capsule())
+            .contentShape(Capsule())
+    }
+}
+
+private struct IslandClip: Shape {
+    var topRadius: CGFloat
+    var bottomRadius: CGFloat
+
+    var animatableData: AnimatablePair<CGFloat, CGFloat> {
+        get { AnimatablePair(topRadius, bottomRadius) }
+        set {
+            topRadius = newValue.first
+            bottomRadius = newValue.second
+        }
+    }
+
+    func path(in rect: CGRect) -> Path {
+        UnevenRoundedRectangle(
+            topLeadingRadius: topRadius,
+            bottomLeadingRadius: bottomRadius,
+            bottomTrailingRadius: bottomRadius,
+            topTrailingRadius: topRadius,
+            style: .continuous
+        ).path(in: rect)
     }
 }

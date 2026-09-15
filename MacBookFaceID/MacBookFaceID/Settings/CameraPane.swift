@@ -4,41 +4,44 @@ struct CameraPane: View {
     @EnvironmentObject private var model: AppModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Camera")
-                .font(.title2.weight(.semibold))
-            Text("Pick which camera to use on the built-in display versus an external monitor.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-
-            Picker("Built-in display", selection: Binding(
-                get: { model.cameraIDBuiltIn },
-                set: { model.cameraIDBuiltIn = $0 }
-            )) {
-                Text("Automatic").tag("")
-                ForEach(model.camera.devices) { device in
-                    Text(device.name).tag(device.id)
+        Form {
+            Section {
+                Picker("Built-in display", selection: Binding(
+                    get: { model.cameraIDBuiltIn },
+                    set: { model.cameraIDBuiltIn = $0 }
+                )) {
+                    Text("Automatic").tag("")
+                    ForEach(model.camera.devices) { device in
+                        Text(device.name).tag(device.id)
+                    }
                 }
-            }
 
-            Picker("External display", selection: Binding(
-                get: { model.cameraIDExternal },
-                set: { model.cameraIDExternal = $0 }
-            )) {
-                Text("Automatic").tag("")
-                ForEach(model.camera.devices) { device in
-                    Text(device.name).tag(device.id)
+                Picker("External display", selection: Binding(
+                    get: { model.cameraIDExternal },
+                    set: { model.cameraIDExternal = $0 }
+                )) {
+                    Text("Automatic").tag("")
+                    ForEach(model.camera.devices) { device in
+                        Text(device.name).tag(device.id)
+                    }
                 }
+            } footer: {
+                Text("Pick which camera to use on the built-in display versus an external monitor.")
             }
 
             if let error = model.camera.lastError {
-                Text(error).font(.caption).foregroundStyle(.red)
+                Section {
+                    Text(error).foregroundStyle(.red)
+                }
             }
 
-            Button("Refresh cameras") {
-                model.camera.refreshDevices()
+            Section {
+                Button("Refresh cameras") {
+                    model.camera.refreshDevices()
+                }
             }
         }
+        .formStyle(.grouped)
         .onAppear {
             model.camera.refreshDevices()
         }

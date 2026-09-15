@@ -83,7 +83,7 @@ final class IslandController: NSObject {
         guard let panel else { return }
         panel.ignoresMouseEvents = hidden
         NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0.22
+            context.duration = 0.18
             panel.animator().alphaValue = hidden ? 0 : 1
         }
         if !hidden {
@@ -95,10 +95,11 @@ final class IslandController: NSObject {
         guard let panel else { return }
         let geometry = IslandGeometry.current()
         let frame = model.isExpanded ? geometry.expandedWindowFrame() : geometry.collapsedWindowFrame()
+        panel.hasShadow = !geometry.hasNotch || model.isExpanded
         if animated {
             NSAnimationContext.runAnimationGroup { context in
-                context.duration = 0.42
-                context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                context.duration = 0.34
+                context.timingFunction = CAMediaTimingFunction(controlPoints: 0.22, 0.94, 0.30, 1.0)
                 context.allowsImplicitAnimation = true
                 panel.animator().setFrame(frame, display: true)
             }

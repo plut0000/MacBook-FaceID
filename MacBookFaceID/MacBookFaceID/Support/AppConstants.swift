@@ -1,10 +1,11 @@
 import Foundation
+import SwiftUI
 
 enum AppConstants {
     static let bundleID = "com.plut0000.MacBookFaceID"
     static let appDisplayName = "MacBook FaceID"
     static let featureName = "Face Unlock"
-    static let marketingVersion = "0.2.0"
+    static let marketingVersion = "0.2.1"
 
     static let keychainService = "com.plut0000.MacBookFaceID.vault-key"
     static let keychainAccount = "aes256-gcm"
@@ -25,10 +26,18 @@ enum AppConstants {
     static let unlockCooldown: TimeInterval = 5
     static let passwordFieldSettleDelay: TimeInterval = 0.45
 
-    static let collapsedChin: CGFloat = 10
-    static let expandedWidth: CGFloat = 340
-    static let expandedBodyHeight: CGFloat = 168
-    static let floatingPillWidth: CGFloat = 214
+    static let collapsedChin: CGFloat = 4
+    static let collapsedFloatingExtraWidth: CGFloat = 18
+    static let expandedWidth: CGFloat = 286
+    static let expandedBodyHeight: CGFloat = 102
+    static let floatingPillWidth: CGFloat = 188
+    static let collapsedNotchRadius: CGFloat = 10
+    static let collapsedFloatingRadius: CGFloat = 16
+    static let expandedIslandRadius: CGFloat = 16
+
+    static let islandSpring = Animation.spring(response: 0.32, dampingFraction: 0.89)
+    static let successStroke = Color(red: 0.62, green: 0.80, blue: 0.64)
+    static let failureStroke = Color(red: 0.86, green: 0.52, blue: 0.50)
 }
 
 enum AnimationStyle: String, CaseIterable, Identifiable {
@@ -46,8 +55,8 @@ enum AnimationStyle: String, CaseIterable, Identifiable {
 
     var subtitle: String {
         switch self {
-        case .minimal: return "Soft island glow"
-        case .classic: return "Bracket scan"
+        case .minimal: return "Hairline ring"
+        case .classic: return "Viewfinder"
         }
     }
 }
@@ -136,11 +145,11 @@ enum AppStatus: String {
         case .permissionNeeded: return "Permission needed"
         case .sessionLocked: return "Session locked"
         case .enrolled: return "Ready"
-        case .watching: return "Looking for you"
+        case .watching: return "Scanning"
         case .matching: return "Unlocking"
-        case .unlocked: return "Welcome back"
-        case .disabled: return "Face Unlock off"
-        case .failed: return "Didn’t match"
+        case .unlocked: return "Unlocked"
+        case .disabled: return "Off"
+        case .failed: return "No match"
         }
     }
 
@@ -149,12 +158,12 @@ enum AppStatus: String {
         case .needsSetup: return "person.crop.circle.badge.plus"
         case .permissionNeeded: return "exclamationmark.triangle"
         case .sessionLocked: return "lock.fill"
-        case .enrolled: return "checkmark.shield"
-        case .watching: return "eye"
-        case .matching: return "faceid"
-        case .unlocked: return "lock.open"
-        case .disabled: return "lock"
-        case .failed: return "xmark.circle"
+        case .enrolled: return "checkmark"
+        case .watching: return "viewfinder"
+        case .matching: return "viewfinder"
+        case .unlocked: return "checkmark"
+        case .disabled: return "circle.slash"
+        case .failed: return "xmark"
         }
     }
 }

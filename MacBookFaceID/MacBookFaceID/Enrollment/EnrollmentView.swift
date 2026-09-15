@@ -6,53 +6,51 @@ struct EnrollmentView: View {
     var onFinished: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(model.enrollment.currentPose.title)
-                .font(.title3.weight(.semibold))
+                .font(.headline)
             Text(model.enrollment.currentPose.hint)
-                .font(.callout)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
 
             ZStack {
                 CameraPreviewView(session: model.camera.session)
                 FaceGuideOverlay(
                     pose: model.enrollment.currentPose,
-                    lockedIn: model.enrollment.poseLocked
+                    lockedIn: model.enrollment.poseLocked,
+                    progress: model.enrollment.holdProgress
                 )
-                VStack {
-                    Spacer()
-                    ProgressView(value: model.enrollment.holdProgress)
-                        .progressViewStyle(.linear)
-                        .tint(model.enrollment.poseLocked ? .green : .white)
-                        .padding(12)
-                }
             }
-            .frame(height: 280)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .frame(maxWidth: .infinity)
+            .frame(height: 248)
+            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+            )
 
-            HStack {
-                Text("\(model.enrollment.captured.count) of \(HeadPose.allCases.count) poses")
+            HStack(spacing: 10) {
+                Text("\(model.enrollment.captured.count) of \(HeadPose.allCases.count)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Spacer()
-                poseDots
+                    .monospacedDigit()
+                poseTicks
+                Spacer(minLength: 0)
+                Button("Capture pose") {
+                    if let frame = model.camera.latestFrame,
+                       let analysis = try? FaceEmbedder.analyze(frame, requireQuality: nil) {
+                        model.enrollment.captureNow(analysis)
+                    }
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .disabled(!model.enrollment.isRunning)
             }
 
             if let message = model.enrollment.message {
                 Text(message)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-            }
-
-            HStack {
-                Button("Capture this pose") {
-                    if let frame = model.camera.latestFrame,
-                       let analysis = try? FaceEmbedder.analyze(frame, requireQuality: nil) {
-                        model.enrollment.captureNow(analysis)
-                    }
-                }
-                .disabled(!model.enrollment.isRunning)
-                Spacer()
             }
         }
         .onAppear {
@@ -84,14 +82,25 @@ struct EnrollmentView: View {
         }
     }
 
-    private var poseDots: some View {
-        HStack(spacing: 5) {
+    private var poseTicks: some View {
+        HStack(spacing: 4) {
             ForEach(HeadPose.allCases) { pose in
-                Circle()
-                    .fill(model.enrollment.captured[pose] != nil ? Color.green : (pose == model.enrollment.currentPose ? Color.white : Color.secondary.opacity(0.35)))
-                    .frame(width: 7, height: 7)
+                Capsule()
+                    .fill(tickColor(for: pose))
+                    .frame(width: pose == model.enrollment.currentPose ? 10 : 7, height: 3)
             }
         }
+        .accessibilityLabel("Pose \(model.enrollment.captured.count + 1) of \(HeadPose.allCases.count)")
+    }
+
+    private func tickColor(for pose: HeadPose) -> Color {
+        if model.enrollment.captured[pose] != nil {
+            return Color.primary.opacity(0.85)
+        }
+        if pose == model.enrollment.currentPose {
+            return Color.primary.opacity(0.55)
+        }
+        return Color.primary.opacity(0.18)
     }
 
     private func save() {

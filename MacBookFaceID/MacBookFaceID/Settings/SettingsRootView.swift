@@ -24,7 +24,7 @@ enum SettingsPane: String, CaseIterable, Identifiable, Hashable {
         case .face: return "person.crop.circle"
         case .recognition: return "waveform"
         case .camera: return "camera"
-        case .password: return "key.fill"
+        case .password: return "key"
         case .general: return "gearshape"
         }
     }
@@ -35,28 +35,14 @@ struct SettingsRootView: View {
     @State private var pane: SettingsPane = .face
 
     var body: some View {
-        HStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 4) {
-                ForEach(SettingsPane.allCases) { item in
-                    Button {
-                        pane = item
-                    } label: {
-                        Label(item.title, systemImage: item.symbol)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 7)
-                            .background(pane == item ? Color.accentColor.opacity(0.18) : Color.clear, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    }
-                    .buttonStyle(.plain)
-                }
-                Spacer()
+        NavigationSplitView {
+            List(SettingsPane.allCases, selection: $pane) { item in
+                Label(item.title, systemImage: item.symbol)
+                    .tag(item)
             }
-            .padding(12)
-            .frame(width: 176)
-            .background(Color(nsColor: .controlBackgroundColor))
-
-            Divider()
-
+            .listStyle(.sidebar)
+            .navigationSplitViewColumnWidth(min: 168, ideal: 180, max: 220)
+        } detail: {
             Group {
                 switch pane {
                 case .face: FacePane()
@@ -66,10 +52,10 @@ struct SettingsRootView: View {
                 case .general: GeneralPane()
                 }
             }
-            .padding(24)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .navigationTitle(pane.title)
         }
-        .frame(minWidth: 680, minHeight: 500)
+        .frame(minWidth: 680, minHeight: 480)
         .onAppear {
             model.session.markActivity()
             model.permissions.refresh()
