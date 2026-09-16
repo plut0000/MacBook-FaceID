@@ -5,7 +5,7 @@ enum AppConstants {
     static let bundleID = "com.plut0000.MacBookFaceID"
     static let appDisplayName = "MacBook FaceID"
     static let featureName = "Face Unlock"
-    static let marketingVersion = "0.2.1"
+    static let marketingVersion = "0.2.2"
 
     static let keychainService = "com.plut0000.MacBookFaceID.vault-key"
     static let keychainAccount = "aes256-gcm"
@@ -22,6 +22,8 @@ enum AppConstants {
     static let enrollmentPoseHold: TimeInterval = 0.38
     static let enrollmentMinQuality: Float = 0.18
     static let matchingFPS: Double = 8
+    /// Longest edge for Vision/embedding. Full camera frames (1080p/4K BGRA) are tens of MB each.
+    static let maxAnalysisLongEdge: CGFloat = 960
     static let livenessWindow: TimeInterval = 1.8
     static let unlockCooldown: TimeInterval = 5
     static let passwordFieldSettleDelay: TimeInterval = 0.45

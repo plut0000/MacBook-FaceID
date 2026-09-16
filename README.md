@@ -30,7 +30,7 @@ Only continue if you accept that tradeoff. Do not use this on a shared Mac you d
    open "/Applications/MacBook FaceID.app"
    ```
 
-A release is published when a version tag such as `v0.2.1` is pushed.
+A release is published when a version tag such as `v0.2.2` is pushed.
 
 ## Permissions
 
@@ -161,8 +161,8 @@ Optional: regenerate the Xcode project with `python3 scripts/generate_xcodeproj.
 ## Building a release
 
 ```bash
-git tag v0.2.1
-git push origin v0.2.1
+git tag v0.2.2
+git push origin v0.2.2
 ```
 
 GitHub Actions (`macos-latest`) builds Release, packs a zip, and on `v*` tags also a zlib DMG. Pull requests upload zip only (not the whole `dist/` tree).

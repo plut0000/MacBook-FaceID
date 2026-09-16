@@ -100,6 +100,8 @@ final class AppModel: ObservableObject {
     private var consecutiveHits = 0
     private var cameraRetainCount = 0
     private var isWatching = false
+    private var isApplyingWatchFrame = false
+    private var pendingWatchResult: Result<FaceFrameAnalysis, Error>?
     private var cancellables = Set<AnyCancellable>()
 
     private enum Keys {
@@ -355,8 +357,11 @@ final class AppModel: ObservableObject {
             retainCamera()
         }
         camera.onFrame = { [weak self] image in
+            // Analyze on the camera queue so the CGImage is not captured by an
+            // unbounded MainActor Task queue. Only the compact embedding hops.
+            let result = Result(catching: { try FaceEmbedder.analyze(image) })
             Task { @MainActor in
-                await self?.considerFrame(image)
+                await self?.enqueueWatchResult(result)
             }
         }
         camera.start()
@@ -368,6 +373,7 @@ final class AppModel: ObservableObject {
 
     func stopWatchingIfUnused() {
         camera.onFrame = nil
+        pendingWatchResult = nil
         if isWatching {
             isWatching = false
             releaseCamera()
@@ -397,15 +403,24 @@ final class AppModel: ObservableObject {
         }
     }
 
-    private func considerFrame(_ image: CGImage) async {
-        guard isEnabled, isSetupComplete, session.isAuthorized, lockObserver.isLocked else { return }
+    private func enqueueWatchResult(_ result: Result<FaceFrameAnalysis, Error>) async {
+        pendingWatchResult = result
+        guard !isApplyingWatchFrame else { return }
+        isApplyingWatchFrame = true
+        defer { isApplyingWatchFrame = false }
+        while let next = pendingWatchResult {
+            pendingWatchResult = nil
+            await considerFrame(next)
+        }
+    }
+
+    private func considerFrame(_ result: Result<FaceFrameAnalysis, Error>) async {
+        guard isWatching, isEnabled, isSetupComplete, session.isAuthorized, lockObserver.isLocked else { return }
         guard unlock.canAttempt() else { return }
         session.markActivity()
 
         do {
-            let analysis = try await Task.detached(priority: .userInitiated) {
-                try FaceEmbedder.analyze(image)
-            }.value
+            let analysis = try result.get()
 
             let verdict = liveness.observe(analysis, mode: livenessMode)
             lastLiveness = verdict
@@ -416,16 +431,16 @@ final class AppModel: ObservableObject {
 
             guard let key = session.key else { return }
             let gallery = try vault.enabledEmbeddings(using: key)
-            let result = try MatchEngine.bestMatch(
+            let match = try MatchEngine.bestMatch(
                 live: analysis.embedding,
                 gallery: gallery,
                 threshold: Float(matchThreshold)
             )
-            lastSimilarity = result.similarity
+            lastSimilarity = match.similarity
 
-            if result.similarity >= Float(matchThreshold) + AppConstants.tightMatchBoost {
+            if match.similarity >= Float(matchThreshold) + AppConstants.tightMatchBoost {
                 consecutiveHits += 2
-            } else if result.passed {
+            } else if match.passed {
                 consecutiveHits += 1
             } else {
                 consecutiveHits = 0
