@@ -37,9 +37,14 @@ struct EnrollmentView: View {
                 poseTicks
                 Spacer(minLength: 0)
                 Button("Capture pose") {
-                    if let frame = model.camera.latestFrame,
-                       let analysis = try? FaceEmbedder.analyze(frame, requireQuality: nil) {
-                        model.enrollment.captureNow(analysis)
+                    guard let frame = model.camera.latestFrame else { return }
+                    Task {
+                        let analysis = await Task.detached(priority: .userInitiated) {
+                            try? FaceEmbedder.analyze(frame, requireQuality: nil)
+                        }.value
+                        if let analysis {
+                            model.enrollment.captureNow(analysis)
+                        }
                     }
                 }
                 .buttonStyle(.bordered)
@@ -56,12 +61,15 @@ struct EnrollmentView: View {
         .onAppear {
             model.retainCamera()
             model.enrollment.start()
+            let enrollment = model.enrollment
             model.camera.onFrame = { image in
+                let analysis = try? FaceEmbedder.analyze(
+                    image,
+                    requireQuality: AppConstants.enrollmentMinQuality
+                )
                 Task { @MainActor in
-                    guard model.enrollment.isRunning else { return }
-                    if let analysis = try? FaceEmbedder.analyze(image, requireQuality: AppConstants.enrollmentMinQuality) {
-                        model.enrollment.consider(analysis)
-                    }
+                    guard enrollment.isRunning, let analysis else { return }
+                    enrollment.consider(analysis)
                 }
             }
             model.camera.start()

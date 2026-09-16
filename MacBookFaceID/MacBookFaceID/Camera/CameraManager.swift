@@ -42,10 +42,27 @@ final class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    var onFrame: ((CGImage) -> Void)?
+    /// Invoked on the camera queue. The callback must finish (including any Vision
+    /// work) before returning; do not hop to another queue while still holding the
+    /// `CGImage`. The next frame is dropped until this returns, so memory stays
+    /// bounded to one in-flight analysis image plus the latest preview snapshot.
+    var onFrame: ((CGImage) -> Void)? {
+        get {
+            latestLock.lock()
+            defer { latestLock.unlock() }
+            return frameHandler
+        }
+        set {
+            latestLock.lock()
+            frameHandler = newValue
+            latestLock.unlock()
+        }
+    }
 
     private let latestLock = NSLock()
     private var latestImage: CGImage?
+    private var frameHandler: ((CGImage) -> Void)?
+    private var isHandlingFrame = false
     private var currentInput: AVCaptureDeviceInput?
 
     var latestFrame: CGImage? {
@@ -58,7 +75,10 @@ final class CameraManager: NSObject, ObservableObject {
     private let queue = DispatchQueue(label: "com.plut0000.MacBookFaceID.camera", qos: .userInitiated)
     private var configured = false
     private var lastFrameTime: CFTimeInterval = 0
-    private let ciContext = CIContext(options: [.useSoftwareRenderer: false])
+    private let ciContext = CIContext(options: [
+        .useSoftwareRenderer: false,
+        .cacheIntermediates: false
+    ])
 
     override init() {
         super.init()
@@ -97,6 +117,10 @@ final class CameraManager: NSObject, ObservableObject {
             if self.session.isRunning {
                 self.session.stopRunning()
             }
+            self.latestLock.lock()
+            self.latestImage = nil
+            self.isHandlingFrame = false
+            self.latestLock.unlock()
             DispatchQueue.main.async { self.isRunning = false }
         }
     }
@@ -128,7 +152,11 @@ final class CameraManager: NSObject, ObservableObject {
     private func configureIfNeeded() throws {
         if configured { return }
         session.beginConfiguration()
-        session.sessionPreset = .medium
+        if session.canSetSessionPreset(.vga640x480) {
+            session.sessionPreset = .vga640x480
+        } else {
+            session.sessionPreset = .medium
+        }
 
         guard let device = resolveDevice() else {
             session.commitConfiguration()
@@ -204,6 +232,25 @@ final class CameraManager: NSObject, ObservableObject {
             return lhs.localizedName < rhs.localizedName
         }
     }
+
+    /// Copies a downscaled bitmap. Callers must not retain this across frames.
+    private func makeAnalysisImage(from pixelBuffer: CVPixelBuffer) -> CGImage? {
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+        let extent = ciImage.extent
+        let longest = max(extent.width, extent.height)
+        let maxEdge = AppConstants.maxAnalysisLongEdge
+        let source: CIImage
+        let fromRect: CGRect
+        if longest > maxEdge, longest > 0 {
+            let scale = maxEdge / longest
+            source = ciImage.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+            fromRect = source.extent
+        } else {
+            source = ciImage
+            fromRect = extent
+        }
+        return ciContext.createCGImage(source, from: fromRect)
+    }
 }
 
 extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -213,16 +260,30 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
         from connection: AVCaptureConnection
     ) {
         let now = CACurrentMediaTime()
-        if now - lastFrameTime < (1.0 / AppConstants.matchingFPS) {
+        let minInterval = 1.0 / AppConstants.matchingFPS
+
+        latestLock.lock()
+        guard let handler = frameHandler, !isHandlingFrame, now - lastFrameTime >= minInterval else {
+            latestLock.unlock()
             return
         }
+        isHandlingFrame = true
         lastFrameTime = now
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
-        guard let image = ciContext.createCGImage(ciImage, from: ciImage.extent) else { return }
-        latestLock.lock()
-        latestImage = image
         latestLock.unlock()
-        onFrame?(image)
+
+        defer {
+            latestLock.lock()
+            isHandlingFrame = false
+            latestLock.unlock()
+        }
+
+        autoreleasepool {
+            guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+            guard let image = makeAnalysisImage(from: pixelBuffer) else { return }
+            latestLock.lock()
+            latestImage = image
+            latestLock.unlock()
+            handler(image)
+        }
     }
 }
